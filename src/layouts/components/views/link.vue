@@ -1,0 +1,65 @@
+<script setup lang="ts">
+import { useClipboard } from '@vueuse/core'
+import Message from 'vue-m-message'
+
+defineOptions({
+  name: 'LinkView',
+})
+
+const route = useRoute()
+
+const { copy, copied } = useClipboard()
+watch(copied, (val) => {
+  val && Message.success('复制成功')
+})
+
+function open() {
+  window.open(route.meta.link, '_blank')
+}
+</script>
+
+<template>
+  <div class="flex flex-col absolute w-full h-full">
+    <transition name="slide-right" mode="out-in" appear>
+      <page-main :key="route.meta.link" class="flex flex-col flex-1 justify-center">
+        <div class="flex flex-col items-center">
+          <svg-icon name="icon-park-twotone:planet" :size="120" class="text-ui-primary/80" />
+          <div class="my-2 text-xl text-dark dark:text-white">
+            是否访问此链接
+          </div>
+          <div class="my-2 max-w-[300px] text-[14px] text-center text-stone-5 cursor-pointer" @click="route.meta.link && copy(route.meta.link)">
+            <HTooltip text="复制链接">
+              <div class="line-clamp-3">
+                {{ route.meta.link }}
+              </div>
+            </HTooltip>
+          </div>
+          <HButton class="my-4" @click="open">
+            <svg-icon name="ri:external-link-fill" />
+            立即访问
+          </HButton>
+        </div>
+      </page-main>
+    </transition>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.slide-right-enter-active {
+  transition: 0.2s;
+}
+
+.slide-right-leave-active {
+  transition: 0.15s;
+}
+
+.slide-right-enter-from {
+  opacity: 0;
+  margin-left: -20px;
+}
+
+.slide-right-leave-to {
+  opacity: 0;
+  margin-left: 20px;
+}
+</style>
