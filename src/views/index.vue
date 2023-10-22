@@ -39,7 +39,7 @@ const sliderValue2 = ref<[number, number]>([20, 50])
 
 const switchChecked = ref<boolean>(false)
 
-const activeRowType = ref('single')
+const activeRowType = ref<any>('single')
 const hover = ref(false)
 const tableData = getTableData()
 const columns = [
