@@ -6,6 +6,7 @@ meta:
 </route>
 
 <script setup lang="ts">
+import type { FormRules } from 'tdesign-vue-next'
 import { MessagePlugin } from 'tdesign-vue-next'
 import Copyright from '@/layouts/components/Copyright/index.vue'
 import useUserStore from '@/store/modules/user'
@@ -34,7 +35,7 @@ const loginForm = ref({
   password: '',
   remember: !!localStorage.login_account,
 })
-const loginRules = ref({
+const loginRules = ref<FormRules>({
   account: [
     { required: true, trigger: 'blur', message: '请输入用户名' },
   ],
@@ -71,7 +72,7 @@ const registerForm = ref({
   password: '',
   checkPassword: '',
 })
-const registerRules = ref({
+const registerRules = ref<FormRules>({
   account: [
     { required: true, trigger: 'blur', message: '请输入用户名' },
   ],
@@ -85,14 +86,8 @@ const registerRules = ref({
   checkPassword: [
     { required: true, trigger: 'blur', message: '请再次输入密码' },
     {
-      validator: (value: string) => {
-        if (value !== registerForm.value.password) {
-          return { result: false, message: '两次输入的密码不一致' }
-        }
-        else {
-          return { result: true }
-        }
-      },
+      validator: value => value === registerForm.value.password,
+      message: '两次输入的密码不一致',
     },
   ],
 })
@@ -110,7 +105,7 @@ const resetForm = ref({
   captcha: '',
   newPassword: '',
 })
-const resetRules = ref({
+const resetRules = ref<FormRules>({
   account: [
     { required: true, trigger: 'blur', message: '请输入用户名' },
   ],
