@@ -75,7 +75,7 @@ function getTableData(total = 5) {
 
 <template>
   <div>
-    <page-header>
+    <PageHeader>
       <template #title>
         <div class="flex items-center gap-4">
           欢迎使用 Fantastic-admin
@@ -86,90 +86,90 @@ function getTableData(total = 5) {
           本演示站基于 Fantastic-admin 源码开发，将 Element Plus 替换为 TDesign ，详细操作步骤请阅读官方文档。
         </div>
       </template>
-    </page-header>
-    <page-main>
-      <t-space size="24px">
-        <t-button variant="base">
+    </PageHeader>
+    <PageMain>
+      <TSpace size="24px">
+        <TButton variant="base">
           填充按钮
-        </t-button>
-        <t-button variant="outline">
+        </TButton>
+        <TButton variant="outline">
           描边按钮
-        </t-button>
-        <t-button variant="dashed">
+        </TButton>
+        <TButton variant="dashed">
           虚框按钮
-        </t-button>
-        <t-button variant="text">
+        </TButton>
+        <TButton variant="text">
           文字按钮
-        </t-button>
-      </t-space>
-    </page-main>
-    <page-main>
-      <t-space direction="vertical">
-        <t-input />
-        <t-input v-model="inputValue" placeholder="请输入内容（有默认值）" />
-      </t-space>
-    </page-main>
-    <page-main>
-      <t-radio-group v-model="radioValue">
-        <t-radio :value="1">
+        </TButton>
+      </TSpace>
+    </PageMain>
+    <PageMain>
+      <TSpace direction="vertical">
+        <TInput />
+        <TInput v-model="inputValue" placeholder="请输入内容（有默认值）" />
+      </TSpace>
+    </PageMain>
+    <PageMain>
+      <TRadioGroup v-model="radioValue">
+        <TRadio :value="1">
           A
-        </t-radio>
-        <t-radio :value="2">
+        </TRadio>
+        <TRadio :value="2">
           B
-        </t-radio>
-        <t-radio :value="3">
+        </TRadio>
+        <TRadio :value="3">
           C
-        </t-radio>
-        <t-radio :value="4">
+        </TRadio>
+        <TRadio :value="4">
           D
-        </t-radio>
-      </t-radio-group>
-    </page-main>
-    <page-main>
-      <t-space direction="vertical" :size="12">
-        <t-date-picker v-model="datePickerValue1" mode="date" />
-        <t-date-picker v-model="datePickerValue2" mode="week" />
-        <t-date-picker v-model="datePickerValue3" mode="month" />
-        <t-date-picker v-model="datePickerValue4" mode="quarter" />
-        <t-date-picker v-model="datePickerValue5" mode="year" />
-      </t-space>
-    </page-main>
-    <page-main>
-      <t-rate v-model="rateValue" />
-    </page-main>
-    <page-main>
-      <t-space>
-        <t-select v-model="selectValue1" :options="selectOptions1" />
-        <t-select v-model="selectValue2" disabled :options="selectOptions2" />
-        <t-select v-model="selectValue3" loading :options="selectOptions3" />
-      </t-space>
-    </page-main>
-    <page-main>
-      <t-slider v-model="sliderValue1" />
-      <t-slider v-model="sliderValue2" range />
-    </page-main>
-    <page-main>
-      <t-switch v-model="switchChecked" />
-    </page-main>
-    <page-main>
-      <t-space direction="vertical">
-        <t-space align="center">
-          <t-radio-group v-model="activeRowType" variant="default-filled">
-            <t-radio-button value="">
+        </TRadio>
+      </TRadioGroup>
+    </PageMain>
+    <PageMain>
+      <TSpace direction="vertical" :size="12">
+        <TDatePicker v-model="datePickerValue1" mode="date" />
+        <TDatePicker v-model="datePickerValue2" mode="week" />
+        <TDatePicker v-model="datePickerValue3" mode="month" />
+        <TDatePicker v-model="datePickerValue4" mode="quarter" />
+        <TDatePicker v-model="datePickerValue5" mode="year" />
+      </TSpace>
+    </PageMain>
+    <PageMain>
+      <TRate v-model="rateValue" />
+    </PageMain>
+    <PageMain>
+      <TSpace>
+        <TSelect v-model="selectValue1" :options="selectOptions1" />
+        <TSelect v-model="selectValue2" disabled :options="selectOptions2" />
+        <TSelect v-model="selectValue3" loading :options="selectOptions3" />
+      </TSpace>
+    </PageMain>
+    <PageMain>
+      <TSlider v-model="sliderValue1" />
+      <TSlider v-model="sliderValue2" range />
+    </PageMain>
+    <PageMain>
+      <TSwitch v-model="switchChecked" />
+    </PageMain>
+    <PageMain>
+      <TSpace direction="vertical">
+        <TSpace align="center">
+          <TRadioGroup v-model="activeRowType" variant="default-filled">
+            <TRadioButton value="">
               不高亮
-            </t-radio-button>
-            <t-radio-button value="single">
+            </TRadioButton>
+            <TRadioButton value="single">
               单行高亮
-            </t-radio-button>
-            <t-radio-button value="multiple">
+            </TRadioButton>
+            <TRadioButton value="multiple">
               多行高亮
-            </t-radio-button>
-          </t-radio-group>
-          <t-checkbox v-model="hover">
+            </TRadioButton>
+          </TRadioGroup>
+          <TCheckbox v-model="hover">
             显示悬浮效果
-          </t-checkbox>
-        </t-space>
-        <t-table
+          </TCheckbox>
+        </TSpace>
+        <TTable
           row-key="key"
           :data="tableData"
           :columns="columns"
@@ -177,7 +177,7 @@ function getTableData(total = 5) {
           :hover="hover"
           lazy-load
         />
-      </t-space>
-    </page-main>
+      </TSpace>
+    </PageMain>
   </div>
 </template>

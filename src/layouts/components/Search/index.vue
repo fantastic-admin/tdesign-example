@@ -276,7 +276,7 @@ function pageJump(path: listTypes['path'], link: listTypes['link']) {
             <DialogPanel class="relative text-left w-full sm:max-w-2xl h-full max-h-4/5 flex flex-col">
               <div class="flex flex-col bg-white dark:bg-stone-8 rounded-xl shadow-xl overflow-y-auto">
                 <div class="flex items-center px-4 py-3" border-b="~ solid stone-2 dark:stone-7">
-                  <svg-icon name="ep:search" :size="18" class="text-stone-5" />
+                  <SvgIcon name="ep:search" :size="18" class="text-stone-5" />
                   <input ref="searchInputRef" v-model="searchInput" placeholder="搜索页面，支持标题、URL模糊查询" class="w-full focus:outline-none border-0 rounded-md placeholder-stone-4 dark:placeholder-stone-5 text-base px-3 bg-transparent text-dark dark:text-white" @keydown.esc="eventBus.emit('global-search-toggle')" @keydown.up.prevent="keyUp" @keydown.down.prevent="keyDown" @keydown.enter.prevent="keyEnter">
                 </div>
                 <DialogDescription class="relative m-0 of-y-hidden">
@@ -284,7 +284,7 @@ function pageJump(path: listTypes['path'], link: listTypes['link']) {
                     <template v-if="isScrollbarsInit">
                       <template v-if="resultList.length > 0">
                         <a v-for="(item, index) in resultList" :ref="setSearchResultItemRef" :key="item.path" class="flex items-center cursor-pointer" :class="{ 'bg-stone-2/40 dark:bg-stone-7/40': index === actived }" @click="pageJump(item.path, item.link)" @mouseover="actived = index">
-                          <svg-icon v-if="item.icon" :name="item.icon" :size="20" class="basis-16 transition" :class="{ 'scale-120 text-ui-primary': index === actived }" />
+                          <SvgIcon v-if="item.icon" :name="item.icon" :size="20" class="basis-16 transition" :class="{ 'scale-120 text-ui-primary': index === actived }" />
                           <div class="flex-1 flex flex-col gap-1 px-4 py-3 truncate" border-l="~ solid stone-2 dark:stone-7">
                             <div class="text-base font-bold truncate">{{ item.title ?? '[ 无标题 ]' }}</div>
                             <Breadcrumb v-if="item.breadcrumb.length" class="truncate">
@@ -297,7 +297,7 @@ function pageJump(path: listTypes['path'], link: listTypes['link']) {
                       </template>
                       <template v-else>
                         <div flex="center col" py-6 text-stone-5>
-                          <svg-icon name="tabler:mood-empty" :size="40" />
+                          <SvgIcon name="tabler:mood-empty" :size="40" />
                           <p text-base m-2>
                             没有找到你想要的
                           </p>
@@ -310,16 +310,16 @@ function pageJump(path: listTypes['path'], link: listTypes['link']) {
                   <div class="flex gap-8">
                     <div class="inline-flex items-center gap-1 text-xs">
                       <HKbd>
-                        <svg-icon name="ion:md-return-left" :size="14" />
+                        <SvgIcon name="ion:md-return-left" :size="14" />
                       </HKbd>
                       <span>访问</span>
                     </div>
                     <div class="inline-flex items-center gap-1 text-xs">
                       <HKbd>
-                        <svg-icon name="ant-design:caret-up-filled" :size="14" />
+                        <SvgIcon name="ant-design:caret-up-filled" :size="14" />
                       </HKbd>
                       <HKbd>
-                        <svg-icon name="ant-design:caret-down-filled" :size="14" />
+                        <SvgIcon name="ant-design:caret-down-filled" :size="14" />
                       </HKbd>
                       <span>切换</span>
                     </div>

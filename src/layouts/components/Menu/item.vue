@@ -62,7 +62,7 @@ defineExpose({
           'w-[50px]': rootMenu.isMenuPopup && level === 0 && rootMenu.props.showCollapseName && rootMenu.props.mode === 'horizontal',
         }" :style="indentStyle"
       >
-        <svg-icon v-if="props.item.meta.icon" :name="props.item.meta.icon" :size="20" class="menu-item-container-icon transition-transform group-hover:scale-120" async />
+        <SvgIcon v-if="props.item.meta.icon" :name="props.item.meta.icon" :size="20" class="menu-item-container-icon transition-transform group-hover:scale-120" async />
         <span
           v-if="!(rootMenu.isMenuPopup && level === 0 && !rootMenu.props.showCollapseName)" class="flex-1 text-sm w-0 truncate transition-width transition-height transition-opacity"
           :class="{

@@ -24,7 +24,7 @@ function handlerMouserScroll(event: WheelEvent) {
 </script>
 
 <template>
-  <transition name="header">
+  <Transition name="header">
     <header v-if="settingsStore.mode === 'pc' && settingsStore.settings.menu.menuMode === 'head'">
       <div class="header-container">
         <div class="main">
@@ -44,7 +44,7 @@ function handlerMouserScroll(event: WheelEvent) {
                     }" :title="item.meta?.title" @click="switchTo(index)"
                   >
                     <div class="inline-flex flex-col justify-center items-center flex-1">
-                      <svg-icon v-if="item.meta?.icon" :name="item.meta?.icon" :size="20" class="menu-item-container-icon transition-transform group-hover:scale-120" async />
+                      <SvgIcon v-if="item.meta?.icon" :name="item.meta?.icon" :size="20" class="menu-item-container-icon transition-transform group-hover:scale-120" async />
                       <span class="flex-1 text-sm w-full text-center truncate transition-width transition-height transition-opacity">
                         {{ item.meta?.title }}
                       </span>
@@ -58,7 +58,7 @@ function handlerMouserScroll(event: WheelEvent) {
         <Tools />
       </div>
     </header>
-  </transition>
+  </Transition>
 </template>
 
 <style lang="scss" scoped>

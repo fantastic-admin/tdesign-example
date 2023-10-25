@@ -20,10 +20,10 @@ function open() {
 
 <template>
   <div class="flex flex-col absolute w-full h-full">
-    <transition name="slide-right" mode="out-in" appear>
-      <page-main :key="route.meta.link" class="flex flex-col flex-1 justify-center">
+    <Transition name="slide-right" mode="out-in" appear>
+      <PageMain :key="route.meta.link" class="flex flex-col flex-1 justify-center">
         <div class="flex flex-col items-center">
-          <svg-icon name="icon-park-twotone:planet" :size="120" class="text-ui-primary/80" />
+          <SvgIcon name="icon-park-twotone:planet" :size="120" class="text-ui-primary/80" />
           <div class="my-2 text-xl text-dark dark:text-white">
             是否访问此链接
           </div>
@@ -35,12 +35,12 @@ function open() {
             </HTooltip>
           </div>
           <HButton class="my-4" @click="open">
-            <svg-icon name="ri:external-link-fill" />
+            <SvgIcon name="ri:external-link-fill" />
             立即访问
           </HButton>
         </div>
-      </page-main>
-    </transition>
+      </PageMain>
+    </Transition>
   </div>
 </template>
 

@@ -35,7 +35,7 @@ function goBack() {
 
 <template>
   <div class="flex items-center justify-between flex-col lg:flex-row lg:gap-12 absolute left-[50%] top-[50%] -translate-x-50% -translate-y-50%">
-    <svg-icon name="404" class="text-[300px] lg:text-[400px]" />
+    <SvgIcon name="404" class="text-[300px] lg:text-[400px]" />
     <div class="flex flex-col gap-4">
       <h1 class="m-0 text-6xl font-sans">
         404

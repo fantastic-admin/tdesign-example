@@ -82,13 +82,13 @@ onUnmounted(() => {
         <div class="main-container">
           <Topbar />
           <div class="main">
-            <router-view v-slot="{ Component, route }">
-              <transition name="slide-right" mode="out-in" appear>
-                <keep-alive :include="keepAliveStore.list">
+            <RouterView v-slot="{ Component, route }">
+              <Transition name="slide-right" mode="out-in" appear>
+                <KeepAlive :include="keepAliveStore.list">
                   <component :is="Component" v-show="!isLink" :key="route.fullPath" />
-                </keep-alive>
-              </transition>
-            </router-view>
+                </KeepAlive>
+              </Transition>
+            </RouterView>
             <LinkView v-if="isLink" />
           </div>
           <Copyright />
@@ -99,7 +99,7 @@ onUnmounted(() => {
     <HotkeysIntro />
     <template v-if="settingsStore.settings.app.enableAppSetting">
       <div class="app-setting" @click="eventBus.emit('global-app-setting-toggle')">
-        <svg-icon name="uiw:setting-o" class="icon" />
+        <SvgIcon name="uiw:setting-o" class="icon" />
       </div>
       <AppSetting />
     </template>

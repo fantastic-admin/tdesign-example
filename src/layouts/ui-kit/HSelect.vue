@@ -36,7 +36,7 @@ const selected = computed({
           {{ selected.label }}
         </span>
         <span class="absolute inset-y-0 end-0 flex items-center pointer-events-none pe-2.5">
-          <svg-icon name="carbon:chevron-down" class="flex-shrink-0 text-stone-5 h-5 w-5" />
+          <SvgIcon name="carbon:chevron-down" class="flex-shrink-0 text-stone-5 h-5 w-5" />
         </span>
       </button>
     </div>

@@ -47,13 +47,13 @@ const enableSidebar = computed(() => {
         shadow: sidebarScrollTop,
       }" @scroll="onSidebarScroll"
     >
-      <transition-group name="sub-sidebar">
+      <TransitionGroup name="sub-sidebar">
         <template v-for="(mainItem, mainIndex) in menuStore.allMenus" :key="mainIndex">
           <div v-show="mainIndex === menuStore.actived">
             <Menu :menu="mainItem.children" :value="route.meta.activeMenu || route.path" :default-openeds="menuStore.defaultOpenedPaths" :accordion="settingsStore.settings.menu.subMenuUniqueOpened" :collapse="settingsStore.mode === 'pc' && settingsStore.settings.menu.subMenuCollapse" class="menu" />
           </div>
         </template>
-      </transition-group>
+      </TransitionGroup>
     </div>
   </div>
 </template>

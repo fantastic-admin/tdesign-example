@@ -139,149 +139,149 @@ function testAccount(account: string) {
         <div class="logo shadow" />
         <img :src="banner" class="banner">
       </div>
-      <t-form v-show="formType === 'login'" ref="loginFormRef" :data="loginForm" :rules="loginRules" label-align="top" :required-mark="false" class="login-form">
+      <TForm v-show="formType === 'login'" ref="loginFormRef" :data="loginForm" :rules="loginRules" label-align="top" :required-mark="false" class="login-form">
         <div class="title-container">
           <h3 class="title">
             欢迎来到 {{ title }} ! 👋🏻
           </h3>
         </div>
-        <t-form-item name="account">
-          <t-input v-model="loginForm.account" size="large" placeholder="用户名" tabindex="1">
+        <TFormItem name="account">
+          <TInput v-model="loginForm.account" size="large" placeholder="用户名" tabindex="1">
             <template #prefix>
-              <svg-icon name="ri:user-3-fill" />
+              <SvgIcon name="ri:user-3-fill" />
             </template>
-          </t-input>
-        </t-form-item>
-        <t-form-item name="password">
-          <t-input v-model="loginForm.password" type="password" size="large" placeholder="密码" tabindex="2">
+          </TInput>
+        </TFormItem>
+        <TFormItem name="password">
+          <TInput v-model="loginForm.password" type="password" size="large" placeholder="密码" tabindex="2">
             <template #prefix>
-              <svg-icon name="ri:lock-2-fill" />
+              <SvgIcon name="ri:lock-2-fill" />
             </template>
-          </t-input>
-        </t-form-item>
+          </TInput>
+        </TFormItem>
         <div class="flex-bar">
-          <t-checkbox v-model:checked="loginForm.remember">
+          <TCheckbox v-model:checked="loginForm.remember">
             记住我
-          </t-checkbox>
-          <t-link theme="primary" @click="formType = 'reset'">
+          </TCheckbox>
+          <TLink theme="primary" @click="formType = 'reset'">
             忘记密码了?
-          </t-link>
+          </TLink>
         </div>
-        <t-button :loading="loading" size="large" style="width: 100%;" @click="handleLogin">
+        <TButton :loading="loading" size="large" style="width: 100%;" @click="handleLogin">
           登录
-        </t-button>
+        </TButton>
         <div class="sub-link">
-          <t-space>
+          <TSpace>
             <span class="text">还没有帐号?</span>
-            <t-link theme="primary" @click="formType = 'register'">
+            <TLink theme="primary" @click="formType = 'register'">
               创建新帐号
-            </t-link>
-          </t-space>
+            </TLink>
+          </TSpace>
         </div>
         <div style="margin-top: 20px; margin-bottom: -20px; text-align: center;">
-          <t-divider>演示账号一键登录</t-divider>
-          <t-space>
-            <t-button size="small" @click="testAccount('admin')">
+          <TDivider>演示账号一键登录</TDivider>
+          <TSpace>
+            <TButton size="small" @click="testAccount('admin')">
               admin
-            </t-button>
-            <t-button theme="default" size="small" @click="testAccount('test')">
+            </TButton>
+            <TButton theme="default" size="small" @click="testAccount('test')">
               test
-            </t-button>
-          </t-space>
+            </TButton>
+          </TSpace>
         </div>
-      </t-form>
-      <t-form v-show="formType === 'register'" ref="registerFormRef" :data="registerForm" :rules="registerRules" label-align="top" :required-mark="false" class="login-form">
+      </TForm>
+      <TForm v-show="formType === 'register'" ref="registerFormRef" :data="registerForm" :rules="registerRules" label-align="top" :required-mark="false" class="login-form">
         <div class="title-container">
           <h3 class="title">
             探索从这里开始! 🚀
           </h3>
         </div>
-        <t-form-item name="account">
-          <t-input v-model="registerForm.account" size="large" placeholder="用户名" tabindex="1">
+        <TFormItem name="account">
+          <TInput v-model="registerForm.account" size="large" placeholder="用户名" tabindex="1">
             <template #prefix>
-              <svg-icon name="ri:user-3-fill" />
+              <SvgIcon name="ri:user-3-fill" />
             </template>
-          </t-input>
-        </t-form-item>
-        <t-form-item name="captcha">
-          <t-input v-model="registerForm.captcha" size="large" placeholder="验证码" tabindex="2">
+          </TInput>
+        </TFormItem>
+        <TFormItem name="captcha">
+          <TInput v-model="registerForm.captcha" size="large" placeholder="验证码" tabindex="2">
             <template #prefix>
-              <svg-icon name="ic:baseline-verified-user" />
+              <SvgIcon name="ic:baseline-verified-user" />
             </template>
             <template #suffix>
-              <t-button theme="default" size="small">
+              <TButton theme="default" size="small">
                 发送验证码
-              </t-button>
+              </TButton>
             </template>
-          </t-input>
-        </t-form-item>
-        <t-form-item name="password">
-          <t-input v-model="registerForm.password" type="password" size="large" placeholder="密码" tabindex="3">
+          </TInput>
+        </TFormItem>
+        <TFormItem name="password">
+          <TInput v-model="registerForm.password" type="password" size="large" placeholder="密码" tabindex="3">
             <template #prefix>
-              <svg-icon name="ri:lock-2-fill" />
+              <SvgIcon name="ri:lock-2-fill" />
             </template>
-          </t-input>
-        </t-form-item>
-        <t-form-item name="checkPassword">
-          <t-input v-model="registerForm.checkPassword" type="password" size="large" placeholder="确认密码" tabindex="4">
+          </TInput>
+        </TFormItem>
+        <TFormItem name="checkPassword">
+          <TInput v-model="registerForm.checkPassword" type="password" size="large" placeholder="确认密码" tabindex="4">
             <template #prefix>
-              <svg-icon name="ri:lock-2-fill" />
+              <SvgIcon name="ri:lock-2-fill" />
             </template>
-          </t-input>
-        </t-form-item>
-        <t-button :loading="loading" size="large" style="width: 100%; margin-top: 20px;" @click="handleRegister">
+          </TInput>
+        </TFormItem>
+        <TButton :loading="loading" size="large" style="width: 100%; margin-top: 20px;" @click="handleRegister">
           注册
-        </t-button>
+        </TButton>
         <div class="sub-link">
-          <t-space>
+          <TSpace>
             <span class="text">已经有帐号?</span>
-            <t-link theme="primary" @click="formType = 'login'">
+            <TLink theme="primary" @click="formType = 'login'">
               去登录
-            </t-link>
-          </t-space>
+            </TLink>
+          </TSpace>
         </div>
-      </t-form>
-      <t-form v-show="formType === 'reset'" ref="resetFormRef" :data="resetForm" :rules="resetRules" label-align="top" :required-mark="false" class="login-form">
+      </TForm>
+      <TForm v-show="formType === 'reset'" ref="resetFormRef" :data="resetForm" :rules="resetRules" label-align="top" :required-mark="false" class="login-form">
         <div class="title-container">
           <h3 class="title">
             忘记密码了? 🔒
           </h3>
         </div>
-        <t-form-item name="account">
-          <t-input v-model="resetForm.account" size="large" placeholder="用户名" tabindex="1">
+        <TFormItem name="account">
+          <TInput v-model="resetForm.account" size="large" placeholder="用户名" tabindex="1">
             <template #prefix>
-              <svg-icon name="ri:user-3-fill" />
+              <SvgIcon name="ri:user-3-fill" />
             </template>
-          </t-input>
-        </t-form-item>
-        <t-form-item name="captcha">
-          <t-input v-model="resetForm.captcha" size="large" placeholder="验证码" tabindex="2">
+          </TInput>
+        </TFormItem>
+        <TFormItem name="captcha">
+          <TInput v-model="resetForm.captcha" size="large" placeholder="验证码" tabindex="2">
             <template #prefix>
-              <svg-icon name="ic:baseline-verified-user" />
+              <SvgIcon name="ic:baseline-verified-user" />
             </template>
             <template #suffix>
-              <t-button theme="default" size="small">
+              <TButton theme="default" size="small">
                 发送验证码
-              </t-button>
+              </TButton>
             </template>
-          </t-input>
-        </t-form-item>
-        <t-form-item name="newPassword">
-          <t-input v-model="resetForm.newPassword" type="password" size="large" placeholder="新密码" tabindex="3">
+          </TInput>
+        </TFormItem>
+        <TFormItem name="newPassword">
+          <TInput v-model="resetForm.newPassword" type="password" size="large" placeholder="新密码" tabindex="3">
             <template #prefix>
-              <svg-icon name="ri:lock-2-fill" />
+              <SvgIcon name="ri:lock-2-fill" />
             </template>
-          </t-input>
-        </t-form-item>
-        <t-button :loading="loading" size="large" style="width: 100%; margin-top: 20px;" @click="handleReset">
+          </TInput>
+        </TFormItem>
+        <TButton :loading="loading" size="large" style="width: 100%; margin-top: 20px;" @click="handleReset">
           确认
-        </t-button>
+        </TButton>
         <div class="sub-link">
-          <t-link theme="primary" @click="formType = 'login'">
+          <TLink theme="primary" @click="formType = 'login'">
             去登录
-          </t-link>
+          </TLink>
         </div>
-      </t-form>
+      </TForm>
     </div>
     <Copyright />
   </div>

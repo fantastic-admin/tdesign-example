@@ -57,14 +57,14 @@ function pathCompile(path: string) {
   <div class="toolbar-container">
     <div class="left-box">
       <div v-if="enableSubMenuCollapseButton" class="flex-center px-2 py-1 cursor-pointer transition-transform" :class="{ '-rotate-z-180': settingsStore.settings.menu.subMenuCollapse }" @click="settingsStore.toggleSidebarCollapse()">
-        <svg-icon name="toolbar-collapse" class="icon" />
+        <SvgIcon name="toolbar-collapse" class="icon" />
       </div>
       <Breadcrumb v-if="settingsStore.mode === 'pc' && settingsStore.settings.breadcrumb.enable && settingsStore.settings.app.routeBaseOn !== 'filesystem'" class="breadcrumb">
-        <transition-group name="breadcrumb">
+        <TransitionGroup name="breadcrumb">
           <BreadcrumbItem v-for="(item, index) in breadcrumbList" :key="`${index}_${item.path}_${item.title}`" :to="index < breadcrumbList.length - 1 && item.path !== '' ? pathCompile(item.path) : ''">
             {{ item.title }}
           </BreadcrumbItem>
-        </transition-group>
+        </TransitionGroup>
       </Breadcrumb>
     </div>
     <Tools />

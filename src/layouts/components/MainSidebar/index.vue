@@ -14,7 +14,7 @@ const { switchTo } = useMenu()
 </script>
 
 <template>
-  <transition name="main-sidebar">
+  <Transition name="main-sidebar">
     <div v-if="settingsStore.settings.menu.menuMode === 'side' || (settingsStore.mode === 'mobile' && settingsStore.settings.menu.menuMode !== 'single')" class="main-sidebar-container">
       <Logo :show-title="false" class="sidebar-logo" />
       <!-- 侧边栏模式（含主导航） -->
@@ -31,7 +31,7 @@ const { switchTo } = useMenu()
               }" :title="item.meta?.title" @click="switchTo(index)"
             >
               <div class="inline-flex flex-col justify-center items-center flex-1 gap-[2px] w-full">
-                <svg-icon v-if="item.meta?.icon" :name="item.meta?.icon" :size="20" class="menu-item-container-icon transition-transform group-hover:scale-120" async />
+                <SvgIcon v-if="item.meta?.icon" :name="item.meta?.icon" :size="20" class="menu-item-container-icon transition-transform group-hover:scale-120" async />
                 <span class="flex-1 text-sm w-full text-center truncate transition-width transition-height transition-opacity">
                   {{ item.meta?.title }}
                 </span>
@@ -41,7 +41,7 @@ const { switchTo } = useMenu()
         </template>
       </div>
     </div>
-  </transition>
+  </Transition>
 </template>
 
 <style lang="scss" scoped>

@@ -41,7 +41,7 @@ function unCollaspe() {
       <slot />
     </div>
     <div v-if="collaspeData" class="collaspe" @click="unCollaspe">
-      <svg-icon name="ep:arrow-down" />
+      <SvgIcon name="ep:arrow-down" />
     </div>
   </div>
 </template>
