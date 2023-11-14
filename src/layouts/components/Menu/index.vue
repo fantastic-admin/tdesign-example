@@ -31,7 +31,7 @@ const isMenuPopup = computed<MenuInjection['isMenuPopup']>(() => {
 })
 
 // 解析传入的 menu 数据，并保存到 items 和 subMenus 对象中
-function initItems(menu: any[], parentPaths: string[] = []) {
+function initItems(menu: MenuProps['menu'], parentPaths: string[] = []) {
   menu.forEach((item) => {
     const index = item.path ?? JSON.stringify(item)
     if (item.children) {
@@ -91,7 +91,6 @@ const handleMenuItemClick: MenuInjection['handleMenuItemClick'] = (index, meta) 
   if (props.mode === 'horizontal' || props.collapse) {
     openedMenus.value = []
   }
-  activeIndex.value = index
   setSubMenusActive(index)
   if (meta?.link) {
     window.open(meta.link)

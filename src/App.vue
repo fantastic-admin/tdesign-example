@@ -2,6 +2,7 @@
 import eruda from 'eruda'
 import VConsole from 'vconsole'
 import hotkeys from 'hotkeys-js'
+import { merge } from 'lodash-es'
 import tDesignLocaleZhCN from 'tdesign-vue-next/es/locale/zh_CN'
 import eventBus from './utils/eventBus'
 import useSettingsStore from '@/store/modules/settings'
@@ -70,7 +71,7 @@ import.meta.env.VITE_APP_DEBUG_TOOL === 'vconsole' && new VConsole()
 </script>
 
 <template>
-  <TConfigProvider :global-config="tDesignLocaleZhCN">
+  <TConfigProvider :global-config="merge(tDesignLocaleZhCN)">
     <RouterView
       v-slot="{ Component, route }"
       :style="{

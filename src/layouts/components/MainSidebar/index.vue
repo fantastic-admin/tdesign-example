@@ -64,8 +64,7 @@ const { switchTo } = useMenu()
   .menu {
     flex: 1;
     width: initial;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden auto;
     overscroll-behavior: contain;
 
     // firefox隐藏滚动条

@@ -32,3 +32,17 @@ export interface MenuInjection {
 }
 
 export const rootMenuInjectionKey = createInjectionKey<MenuInjection>('rootMenu')
+
+export interface SubMenuProps {
+  uniqueKey: string[]
+  menu: Menu.recordRaw
+  level?: number
+}
+
+export interface SubMenuItemProps {
+  uniqueKey: string[]
+  item: Menu.recordRaw
+  level?: number
+  subMenu?: boolean
+  expand?: boolean
+}

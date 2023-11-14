@@ -3,19 +3,15 @@ import { useTimeoutFn } from '@vueuse/core'
 import type { OverlayScrollbarsComponentRef } from 'overlayscrollbars-vue'
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-vue'
 import Item from './item.vue'
+import type { SubMenuProps } from './types'
 import { rootMenuInjectionKey } from './types'
-import type { Menu } from '#/global'
 
 defineOptions({
   name: 'SubMenu',
 })
 
 const props = withDefaults(
-  defineProps<{
-    uniqueKey: string[]
-    menu: Menu.recordRaw
-    level?: number
-  }>(),
+  defineProps<SubMenuProps>(),
   {
     level: 0,
   },
@@ -56,7 +52,6 @@ const transitionEvent = computed(() => {
           const memorizedHeight = el.offsetHeight
           el.style.maxHeight = '0'
           el.style.overflow = 'hidden'
-          // eslint-disable-next-line no-void
           void el.offsetHeight
           el.style.maxHeight = `${memorizedHeight}px`
         },
@@ -187,7 +182,7 @@ function handleMouseleave() {
   <Teleport v-if="hasChildren" to="body" :disabled="!rootMenu.isMenuPopup">
     <Transition v-bind="transitionClass" v-on="transitionEvent">
       <OverlayScrollbarsComponent
-        v-if="opened" ref="subMenuRef" :options="{ scrollbars: { autoHide: 'leave', autoHideDelay: 300 } }" defer class="sub-menu" :class="{
+        v-if="opened" ref="subMenuRef" :options="{ scrollbars: { visibility: 'hidden' } }" defer class="sub-menu" :class="{
           'bg-[var(--g-sub-sidebar-bg)]': rootMenu.isMenuPopup,
           'ring-1 ring-stone-2 dark:ring-stone-8 shadow-xl fixed z-3000 w-[200px]': rootMenu.isMenuPopup,
           'mx-2': rootMenu.isMenuPopup && (rootMenu.props.mode === 'vertical' || level !== 0),

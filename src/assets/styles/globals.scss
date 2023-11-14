@@ -134,3 +134,7 @@ textarea {
 .v-popper--theme-tooltip.v-popper--shown * {
   transition: none !important;
 }
+
+[data-overlayscrollbars-contents] {
+  overscroll-behavior: contain;
+}

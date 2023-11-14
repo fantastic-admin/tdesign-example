@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { useType } from '@/iconify/index.json'
+import { isOfflineUse } from '@/iconify/index.json'
 
 defineOptions({
   name: 'SvgIcon',
@@ -17,7 +17,7 @@ const props = defineProps<{
 
 const outputType = computed(() => {
   if (props.name.indexOf('i-') === 0) {
-    return (props.async || useType === 'offline') ? 'svg' : 'css'
+    return (props.async || isOfflineUse) ? 'svg' : 'css'
   }
   else if (props.name.includes(':')) {
     return 'svg'
@@ -30,7 +30,7 @@ const outputType = computed(() => {
 const outputName = computed(() => {
   if (props.name.indexOf('i-') === 0) {
     let conversionName = props.name
-    if (props.async || useType === 'offline') {
+    if (props.async || isOfflineUse) {
       conversionName = conversionName.replace('i-', '')
     }
     return conversionName

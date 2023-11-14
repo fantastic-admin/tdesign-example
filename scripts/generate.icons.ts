@@ -8,15 +8,14 @@ async function generateIcons() {
   // 拿到全部图标集的原始数据
   const raw = await lookupCollections()
 
-  // 默认必须安装的图标集
-  const defaultCollectionID = ['ep']
+  let lastChoose = fs.readFileSync(path.resolve(process.cwd(), 'src/iconify/index.json'), 'utf-8')
+  lastChoose = JSON.parse(lastChoose)
+
   // 取出可使用的图标集数据用于 inquirer 选择，并按名称排序
   const collections = Object.entries(raw).map(([id, item]) => ({
     ...item,
     id,
-  })).filter((item) => {
-    return item.hidden !== true && !defaultCollectionID.includes(item.id)
-  }).sort((a, b) => a.name.localeCompare(b.name))
+  })).sort((a, b) => a.name.localeCompare(b.name))
 
   /**
    * 分别会在对应目录下生成以下文件，其中(1)(3)用于离线下载并安装图标，(2)用于图标选择器使用
@@ -33,24 +32,20 @@ async function generateIcons() {
         name: `${item.name} (${item.total} icons)`,
         value: item.id,
       })),
+      default: lastChoose.collections,
     },
     {
-      type: 'list',
-      message: '图标集使用方式',
-      name: 'useType',
-      choices: [
-        { name: '在线', value: 'online', default: true },
-        { name: '离线 (本地)', value: 'offline' },
-      ],
+      type: 'confirm',
+      name: 'isOfflineUse',
+      message: '是否需要离线使用',
+      default: false,
     },
   ]).then(async (answers) => {
-    answers.collections.push(...defaultCollectionID)
-
     await fs.writeJSON(
       path.resolve(process.cwd(), 'src/iconify/index.json'),
       {
         collections: answers.collections,
-        useType: answers.useType,
+        isOfflineUse: answers.isOfflineUse,
       },
     )
 
@@ -70,7 +65,7 @@ async function generateIcons() {
 
       const offlineFilePath = path.join(outputDir, `${info}-raw.json`)
 
-      if (answers.useType === 'offline') {
+      if (answers.isOfflineUse) {
         await fs.writeJSON(offlineFilePath, setData)
       }
     }

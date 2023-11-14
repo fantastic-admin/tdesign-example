@@ -23,13 +23,9 @@ const title = ref(import.meta.env.VITE_APP_TITLE)
 const logo = ref(imgLogo)
 
 const to = computed(() => {
-  const rtn: {
-    name?: string
-  } = {}
-  if (settingsStore.settings.home.enable) {
-    rtn.name = 'home'
+  return {
+    ...(settingsStore.settings.home.enable && { name: 'home' }),
   }
-  return rtn
 })
 </script>
 

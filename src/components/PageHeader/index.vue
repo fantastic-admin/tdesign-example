@@ -12,7 +12,7 @@ const slots = useSlots()
 </script>
 
 <template>
-  <div class="page-header flex items-center justify-between flex-wrap gap-5 mb-5 px-5 py-4 bg-[var(--g-container-bg)] transition-background-color">
+  <div class="page-header flex items-center justify-between flex-wrap gap-5 mb-5 px-5 py-4 bg-[var(--g-container-bg)] transition-background-color-300">
     <div class="main flex-[1_1_70%]">
       <div class="text-2xl">
         <slot name="title">

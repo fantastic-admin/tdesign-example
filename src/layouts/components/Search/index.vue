@@ -59,10 +59,7 @@ const isScrollbarsInit = ref(false)
 
 const searchInputRef = ref()
 const searchResultRef = ref<OverlayScrollbarsComponentRef>()
-const searchResultItemRef = ref<any>([])
-function setSearchResultItemRef(el: any) {
-  searchResultItemRef.value.push(el)
-}
+const searchResultItemRef = ref<HTMLElement[]>([])
 onBeforeUpdate(() => {
   searchResultItemRef.value = []
 })
@@ -226,7 +223,7 @@ function keyDown() {
 }
 function keyEnter() {
   if (actived.value !== -1) {
-    searchResultItemRef.value[actived.value].click()
+    searchResultItemRef.value.find(item => Number.parseInt(item.dataset.index!) === actived.value)?.click()
   }
 }
 // FIXME 列表数据变更后，快捷键滚动失效
@@ -236,8 +233,8 @@ function handleScroll() {
     let scrollTo = 0
     if (actived.value !== -1) {
       scrollTo = contentDom.scrollTop
-      const activedOffsetTop = searchResultItemRef.value[actived.value].offsetTop
-      const activedClientHeight = searchResultItemRef.value[actived.value].clientHeight
+      const activedOffsetTop = searchResultItemRef.value.find(item => Number.parseInt(item.dataset.index!) === actived.value)?.offsetTop ?? 0
+      const activedClientHeight = searchResultItemRef.value.find(item => Number.parseInt(item.dataset.index!) === actived.value)?.clientHeight ?? 0
       const searchScrollTop = contentDom.scrollTop
       const searchClientHeight = contentDom.clientHeight
       if (activedOffsetTop + activedClientHeight > searchScrollTop + searchClientHeight) {
@@ -283,7 +280,7 @@ function pageJump(path: listTypes['path'], link: listTypes['link']) {
                   <OverlayScrollbarsComponent ref="searchResultRef" :options="{ scrollbars: { autoHide: 'leave', autoHideDelay: 300 } }" class="h-full" @os-initialized="isScrollbarsInit = true">
                     <template v-if="isScrollbarsInit">
                       <template v-if="resultList.length > 0">
-                        <a v-for="(item, index) in resultList" :ref="setSearchResultItemRef" :key="item.path" class="flex items-center cursor-pointer" :class="{ 'bg-stone-2/40 dark:bg-stone-7/40': index === actived }" @click="pageJump(item.path, item.link)" @mouseover="actived = index">
+                        <a v-for="(item, index) in resultList" ref="searchResultItemRef" :key="item.path" class="flex items-center cursor-pointer" :class="{ 'bg-stone-2/40 dark:bg-stone-7/40': index === actived }" :data-index="index" @click="pageJump(item.path, item.link)" @mouseover="actived = index">
                           <SvgIcon v-if="item.icon" :name="item.icon" :size="20" class="basis-16 transition" :class="{ 'scale-120 text-ui-primary': index === actived }" />
                           <div class="flex-1 flex flex-col gap-1 px-4 py-3 truncate" border-l="~ solid stone-2 dark:stone-7">
                             <div class="text-base font-bold truncate">{{ item.title ?? '[ 无标题 ]' }}</div>
