@@ -3,21 +3,7 @@ import type { RecursiveRequired, Settings } from '#/global'
 import settingsDefault from '@/settings.default'
 
 const globalSettings: Settings.all = {
-  app: {
-    enableAppSetting: true,
-  },
-  layout: {
-    enableMobileAdaptation: true,
-  },
-  toolbar: {
-    enableColorScheme: true,
-  },
-  copyright: {
-    enable: true,
-    dates: '2020-present',
-    company: 'Fantastic-admin',
-    website: 'https://fantastic-admin.gitee.io',
-  },
+  // 请在此处编写或粘贴配置代码
 }
 
 export default defaultsDeep(globalSettings, settingsDefault) as RecursiveRequired<Settings.all>

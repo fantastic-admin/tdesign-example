@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useClipboard } from '@vueuse/core'
 import Message from 'vue-m-message'
+import settingsDefault from '@/settings.default'
 import eventBus from '@/utils/eventBus'
 import useSettingsStore from '@/store/modules/settings'
 import useMenuStore from '@/store/modules/menu'
@@ -50,14 +51,41 @@ watch(copied, (val) => {
   }
 })
 
+interface AnyObject {
+  [key: string]: any
+}
+// 比较两个对象，并提取出不同的部分
+function getObjectDiff(originalObj: AnyObject, diffObj: AnyObject): AnyObject {
+  if (typeof originalObj !== 'object' || typeof diffObj !== 'object') {
+    return diffObj
+  }
+  const diff: AnyObject = {}
+  for (const key in diffObj) {
+    const originalValue = originalObj[key]
+    const diffValue = diffObj[key]
+    if (originalValue !== diffValue) {
+      if (typeof originalValue === 'object' && typeof diffValue === 'object') {
+        const nestedDiff = getObjectDiff(originalValue, diffValue)
+        if (Object.keys(nestedDiff).length > 0) {
+          diff[key] = nestedDiff
+        }
+      }
+      else {
+        diff[key] = diffValue
+      }
+    }
+  }
+  return diff
+}
+
 function handleCopy() {
-  copy(JSON.stringify(settingsStore.settings, null, 2))
+  copy(JSON.stringify(getObjectDiff(settingsDefault, settingsStore.settings), null, 2))
 }
 </script>
 
 <template>
   <HSlideover v-model="isShow" title="应用配置">
-    <div class="px-4 py-2 rounded-2 text-sm/6 c-rose bg-rose/20 ">
+    <div class="rounded-2 bg-rose/20 px-4 py-2 text-sm/6 c-rose">
       <p class="my-1">
         应用配置可实时预览效果，但只是临时生效，要想真正应用于项目，可以点击下方的「复制配置」按钮，并将配置粘贴到 src/settings.ts 文件中。
       </p>
@@ -68,7 +96,7 @@ function handleCopy() {
     <div class="divider">
       颜色主题风格
     </div>
-    <div class="flex justify-center items-center pb-4">
+    <div class="flex items-center justify-center pb-4">
       <HToggle v-model="isDark" on-icon="ri:sun-line" off-icon="ri:moon-line" />
     </div>
     <div v-if="settingsStore.mode === 'pc'" class="divider">

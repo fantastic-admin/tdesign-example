@@ -26,14 +26,14 @@ const { switchTo } = useMenu()
             }"
           >
             <div
-              v-if="item.children && item.children.length !== 0" class="menu-item-container w-full h-full flex justify-between items-center gap-1 px-2! py-4 transition-all cursor-pointer group text-[var(--g-main-sidebar-menu-color)] hover:(text-[var(--g-main-sidebar-menu-hover-color)] bg-[var(--g-main-sidebar-menu-hover-bg)])" :class="{
+              v-if="item.children && item.children.length !== 0" class="group menu-item-container h-full w-full flex cursor-pointer items-center justify-between gap-1 py-4 text-[var(--g-main-sidebar-menu-color)] transition-all hover:(bg-[var(--g-main-sidebar-menu-hover-bg)] text-[var(--g-main-sidebar-menu-hover-color)]) px-2!" :class="{
                 'text-[var(--g-main-sidebar-menu-active-color)]! bg-[var(--g-main-sidebar-menu-active-bg)]!': index === menuStore.actived,
-              }" :title="item.meta?.title" @click="switchTo(index)"
+              }" :title="typeof item.meta?.title === 'function' ? item.meta?.title() : item.meta?.title" @click="switchTo(index)"
             >
-              <div class="inline-flex flex-col justify-center items-center flex-1 gap-[2px] w-full">
+              <div class="w-full inline-flex flex-1 flex-col items-center justify-center gap-[2px]">
                 <SvgIcon v-if="item.meta?.icon" :name="item.meta?.icon" :size="20" class="menu-item-container-icon transition-transform group-hover:scale-120" async />
-                <span class="flex-1 text-sm w-full text-center truncate transition-width transition-height transition-opacity">
-                  {{ item.meta?.title }}
+                <span class="w-full flex-1 truncate text-center text-sm transition-height transition-opacity transition-width">
+                  {{ typeof item.meta?.title === 'function' ? item.meta?.title() : item.meta?.title }}
                 </span>
               </div>
             </div>
@@ -77,20 +77,17 @@ const { switchTo } = useMenu()
 
     :deep(.menu-item) {
       .menu-item-container {
-        height: 60px;
-        padding: 0 5px;
+        padding-block: 8px;
         color: var(--g-main-sidebar-menu-color);
-        background-color: var(--g-main-sidebar-menu-bg);
+
+        &:hover {
+          color: var(--g-main-sidebar-menu-hover-color);
+          background-color: var(--g-main-sidebar-menu-hover-bg);
+        }
 
         .menu-item-container-icon {
-          transform: scale(1);
           font-size: 24px !important;
         }
-      }
-
-      &:hover .menu-item-container {
-        color: var(--g-main-sidebar-menu-hover-color);
-        background-color: var(--g-main-sidebar-menu-hover-bg);
       }
 
       &.active .menu-item-container {

@@ -2,6 +2,7 @@ import antfu from '@antfu/eslint-config'
 
 export default antfu(
   {
+    unocss: true,
     ignores: [
       'public',
       'dist*',
@@ -19,7 +20,7 @@ export default antfu(
       'src/**/*.vue',
     ],
     rules: {
-      'vue/component-tags-order': ['error', {
+      'vue/block-order': ['error', {
         order: ['route', 'script', 'template', 'style'],
       }],
     },

@@ -23,7 +23,7 @@ const subMenuRef = shallowRef<OverlayScrollbarsComponentRef>()
 const rootMenu = inject(rootMenuInjectionKey)!
 
 const opened = computed(() => {
-  return rootMenu.openedMenus.includes(props.uniqueKey[props.uniqueKey.length - 1])
+  return rootMenu.openedMenus.includes(props.uniqueKey.at(-1)!)
 })
 
 const transitionEvent = computed(() => {
@@ -114,7 +114,7 @@ function handleClick() {
     rootMenu.handleSubMenuClick(index, props.uniqueKey)
   }
   else {
-    rootMenu.handleMenuItemClick(index, props.menu.meta)
+    rootMenu.handleMenuItemClick(index)
   }
 }
 
@@ -188,8 +188,8 @@ function handleMouseleave() {
           'mx-2': rootMenu.isMenuPopup && (rootMenu.props.mode === 'vertical' || level !== 0),
         }"
       >
-        <template v-for="item in menu.children" :key="item.path">
-          <SubMenu v-if="item.meta?.sidebar !== false" :unique-key="[...uniqueKey, item.path]" :menu="item" :level="level + 1" />
+        <template v-for="item in menu.children" :key="item.path ?? JSON.stringify(item)">
+          <SubMenu v-if="item.meta?.sidebar !== false" :unique-key="[...uniqueKey, item.path ?? JSON.stringify(item)]" :menu="item" :level="level + 1" />
         </template>
       </OverlayScrollbarsComponent>
     </Transition>

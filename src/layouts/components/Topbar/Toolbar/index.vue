@@ -4,7 +4,6 @@ import Breadcrumb from '../../Breadcrumb/index.vue'
 import BreadcrumbItem from '../../Breadcrumb/item.vue'
 import Tools from '../../Tools/index.vue'
 import useSettingsStore from '@/store/modules/settings'
-import useMenuStore from '@/store/modules/menu'
 
 defineOptions({
   name: 'Toolbar',
@@ -13,24 +12,16 @@ defineOptions({
 const route = useRoute()
 
 const settingsStore = useSettingsStore()
-const menuStore = useMenuStore()
 
 const enableSubMenuCollapseButton = computed(() => {
-  return settingsStore.mode === 'mobile' || (
-    ['side', 'head', 'single'].includes(settingsStore.settings.menu.menuMode)
-      && settingsStore.settings.menu.enableSubMenuCollapseButton
-      && !(
-        !menuStore.sidebarMenus[0].children
-          || menuStore.sidebarMenus[0]?.children.every(item => item.meta?.sidebar === false)
-      )
-  )
+  return settingsStore.mode === 'mobile' || settingsStore.settings.menu.enableSubMenuCollapseButton
 })
 
 const breadcrumbList = computed(() => {
   const breadcrumbList = []
   if (settingsStore.settings.home.enable) {
     breadcrumbList.push({
-      path: '/',
+      path: settingsStore.settings.home.fullPath,
       title: settingsStore.settings.home.title,
     })
   }
@@ -56,8 +47,8 @@ function pathCompile(path: string) {
 <template>
   <div class="toolbar-container">
     <div class="left-box">
-      <div v-if="enableSubMenuCollapseButton" class="flex-center px-2 py-1 cursor-pointer transition-transform" :class="{ '-rotate-z-180': settingsStore.settings.menu.subMenuCollapse }" @click="settingsStore.toggleSidebarCollapse()">
-        <SvgIcon name="toolbar-collapse" class="icon" />
+      <div v-if="enableSubMenuCollapseButton" class="flex-center cursor-pointer px-2 py-1 transition-transform" :class="{ '-rotate-z-180': settingsStore.settings.menu.subMenuCollapse }" @click="settingsStore.toggleSidebarCollapse()">
+        <SvgIcon name="toolbar-collapse" />
       </div>
       <Breadcrumb v-if="settingsStore.mode === 'pc' && settingsStore.settings.breadcrumb.enable && settingsStore.settings.app.routeBaseOn !== 'filesystem'" class="breadcrumb">
         <TransitionGroup name="breadcrumb">

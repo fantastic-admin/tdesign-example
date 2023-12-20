@@ -9,11 +9,11 @@ const globalSettingsDefault: RecursiveRequired<Settings.all> = {
     enableProgress: true,
     enableDynamicTitle: false,
     routeBaseOn: 'frontend',
-    enableAppSetting: false,
   },
   home: {
     enable: true,
     title: '主页',
+    fullPath: '/',
   },
   layout: {
     enableMobileAdaptation: false,

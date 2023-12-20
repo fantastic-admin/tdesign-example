@@ -38,11 +38,6 @@ declare namespace Settings {
      * @可选值 `'filesystem'` 文件系统
      */
     routeBaseOn?: 'frontend' | 'backend' | 'filesystem'
-    /**
-     * 是否开启应用配置，强烈建议在生产环境中关闭
-     * @默认值 `false`
-     */
-    enableAppSetting?: boolean
   }
   interface home {
     /**
@@ -55,6 +50,11 @@ declare namespace Settings {
      * @默认值 `'主页'`
      */
     title?: string
+    /**
+     * 主页完整路径
+     * @默认值 `'/'`
+     */
+    fullPath?: string
   }
   interface layout {
     /**
@@ -243,7 +243,7 @@ declare namespace Menu {
   interface recordRaw {
     path?: string
     meta?: {
-      title?: string
+      title?: string | (() => string)
       icon?: string
       defaultOpened?: boolean
       auth?: string | string[]
@@ -255,7 +255,7 @@ declare namespace Menu {
   /** 主导航 */
   interface recordMainRaw {
     meta?: {
-      title?: string
+      title?: string | (() => string)
       icon?: string
       auth?: string | string[]
     }

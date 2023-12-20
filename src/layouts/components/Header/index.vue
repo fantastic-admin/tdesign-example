@@ -39,14 +39,14 @@ function handlerMouserScroll(event: WheelEvent) {
                   }"
                 >
                   <div
-                    v-if="item.children && item.children.length !== 0" class="menu-item-container w-full h-full flex justify-between items-center gap-1 px-5 py-4 transition-all cursor-pointer group text-[var(--g-header-menu-color)] hover:(text-[var(--g-header-menu-hover-color)] bg-[var(--g-header-menu-hover-bg)])" :class="{
+                    v-if="item.children && item.children.length !== 0" class="group menu-item-container h-full w-full flex cursor-pointer items-center justify-between gap-1 px-3 text-[var(--g-header-menu-color)] transition-all hover:(bg-[var(--g-header-menu-hover-bg)] text-[var(--g-header-menu-hover-color)])" :class="{
                       'text-[var(--g-header-menu-active-color)]! bg-[var(--g-header-menu-active-bg)]!': index === menuStore.actived,
-                    }" :title="item.meta?.title" @click="switchTo(index)"
+                    }" :title="typeof item.meta?.title === 'function' ? item.meta?.title() : item.meta?.title" @click="switchTo(index)"
                   >
-                    <div class="inline-flex flex-col justify-center items-center flex-1">
+                    <div class="inline-flex flex-1 items-center justify-center gap-1">
                       <SvgIcon v-if="item.meta?.icon" :name="item.meta?.icon" :size="20" class="menu-item-container-icon transition-transform group-hover:scale-120" async />
-                      <span class="flex-1 text-sm w-full text-center truncate transition-width transition-height transition-opacity">
-                        {{ item.meta?.title }}
+                      <span class="w-full flex-1 truncate text-sm transition-height transition-opacity transition-width">
+                        {{ typeof item.meta?.title === 'function' ? item.meta?.title() : item.meta?.title }}
                       </span>
                     </div>
                   </div>
@@ -104,12 +104,12 @@ header {
     background-color: inherit;
 
     .logo {
-      width: 50px;
-      height: 50px;
+      width: initial;
+      height: 40px;
     }
 
     span {
-      font-size: 24px;
+      font-size: 20px;
       letter-spacing: 1px;
       color: var(--g-header-color);
     }
@@ -135,23 +135,14 @@ header {
   .menu {
     display: inline-flex;
     height: 100%;
-    background-color: var(--g-header-bg);
 
     :deep(.menu-item) {
       .menu-item-container {
-        width: 80px;
-        padding: 0 5px;
         color: var(--g-header-menu-color);
-        background-color: var(--g-header-menu-bg);
 
         &:hover {
           color: var(--g-header-menu-hover-color);
           background-color: var(--g-header-menu-hover-bg);
-        }
-
-        .menu-item-container-icon {
-          transform: scale(1);
-          font-size: 24px !important;
         }
       }
 
@@ -164,15 +155,6 @@ header {
 
   :deep(.tools) {
     padding: 0;
-
-    .buttons .item .icon {
-      color: var(--g-header-color);
-    }
-
-    .user-container {
-      font-size: 16px;
-      color: var(--g-header-color);
-    }
   }
 }
 

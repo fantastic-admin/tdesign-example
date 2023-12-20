@@ -15,11 +15,9 @@ const useSettingsStore = defineStore(
       switch (colorScheme) {
         case 'light':
           document.documentElement.classList.remove('dark')
-          document.documentElement.removeAttribute('theme-mode')
           break
         case 'dark':
           document.documentElement.classList.add('dark')
-          document.documentElement.setAttribute('theme-mode', 'dark')
           break
       }
     }, {
