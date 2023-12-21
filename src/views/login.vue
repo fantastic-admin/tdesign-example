@@ -396,10 +396,6 @@ function testAccount(account: string) {
     }
   }
 
-  :deep(.ant-divider-inner-text) {
-    background-color: var(--g-container-bg);
-  }
-
   .flex-bar {
     display: flex;
     align-items: center;
