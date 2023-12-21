@@ -1,0 +1,1 @@
+import{d as a,c as r,o as p,E as n,i as t,ak as e,k as l,t as i,S as c,U as d}from"./index-m0MnqA5j.js";const f=a({__name:"HTooltip",props:{text:{default:""}},setup(m){return(o,_)=>{const s=r("VTooltip");return p(),n(s,c(d(o.$attrs)),{popper:t(()=>[e(o.$slots,"text",{},()=>[l(i(o.text),1)])]),default:t(()=>[e(o.$slots,"default")]),_:3},16)}}});export{f as _};

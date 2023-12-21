@@ -1,0 +1,1 @@
+import{_ as t}from"./_plugin-vue_export-helper-x3n3nnut.js";import{o as r,e as s,ak as o}from"./index-m0MnqA5j.js";const c={},a={class:"flex items-center text-sm"};function n(e,d){return r(),s("div",a,[o(e.$slots,"default",{},void 0,!0)])}const l=t(c,[["render",n],["__scopeId","data-v-57b61e27"]]);export{l as default};
