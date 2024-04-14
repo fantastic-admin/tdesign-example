@@ -57,20 +57,22 @@ router.beforeEach(async (to, from, next) => {
       }
     }
     else {
+      // 获取用户权限
+      settingsStore.settings.app.enablePermission && await userStore.getPermissions()
       // 生成动态路由
       switch (settingsStore.settings.app.routeBaseOn) {
         case 'frontend':
-          await routeStore.generateRoutesAtFront(asyncRoutes)
+          routeStore.generateRoutesAtFront(asyncRoutes)
           break
         case 'backend':
           await routeStore.generateRoutesAtBack()
           break
         case 'filesystem':
-          await routeStore.generateRoutesAtFilesystem(asyncRoutesByFilesystem)
+          routeStore.generateRoutesAtFilesystem(asyncRoutesByFilesystem)
           // 文件系统生成的路由，需要手动生成导航数据
           switch (settingsStore.settings.menu.baseOn) {
             case 'frontend':
-              await menuStore.generateMenusAtFront()
+              menuStore.generateMenusAtFront()
               break
             case 'backend':
               await menuStore.generateMenusAtBack()
@@ -136,7 +138,8 @@ router.afterEach((to, from) => {
       keepAliveStore.add(componentName)
     }
     else {
-      console.warn('该页面组件未设置组件名，会导致缓存失效，请检查')
+      // turbo-console-disable-next-line
+      console.warn('[Fantastic-admin] 该页面组件未设置组件名，会导致缓存失效，请检查')
     }
   }
   // 判断离开页面是否开启缓存，如果开启，则根据缓存规则判断是否需要清空 keep-alive 全局状态里离开页面的 name 信息
@@ -155,6 +158,21 @@ router.afterEach((to, from) => {
             keepAliveStore.remove(componentName)
           }
           break
+      }
+      // 通过 meta.noCache 判断针对哪些页面不需要进行缓存
+      if (from.meta.noCache) {
+        switch (typeof from.meta.noCache) {
+          case 'string':
+            if (from.meta.noCache === to.name) {
+              keepAliveStore.remove(componentName)
+            }
+            break
+          case 'object':
+            if (from.meta.noCache.includes(to.name as string)) {
+              keepAliveStore.remove(componentName)
+            }
+            break
+        }
       }
       // 如果进入的是 reload 页面，则也将离开页面的缓存清空
       if (to.name === 'reload') {

@@ -8,10 +8,28 @@ const useSettingsStore = defineStore(
   'settings',
   () => {
     const settings = ref(settingsDefault)
-    watch(() => settings.value.app.colorScheme, (colorScheme) => {
-      if (colorScheme === '') {
-        colorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+
+    const prefersColorScheme = window.matchMedia('(prefers-color-scheme: dark)')
+    const currentColorScheme = ref<Exclude<Settings.app['colorScheme'], ''>>()
+    watch(() => settings.value.app.colorScheme, (val) => {
+      if (val === '') {
+        prefersColorScheme.addEventListener('change', updateTheme)
       }
+      else {
+        prefersColorScheme.removeEventListener('change', updateTheme)
+      }
+    }, {
+      immediate: true,
+    })
+    watch(() => settings.value.app.colorScheme, updateTheme, {
+      immediate: true,
+    })
+    function updateTheme() {
+      let colorScheme = settings.value.app.colorScheme
+      if (colorScheme === '') {
+        colorScheme = prefersColorScheme.matches ? 'dark' : 'light'
+      }
+      currentColorScheme.value = colorScheme
       switch (colorScheme) {
         case 'light':
           document.documentElement.classList.remove('dark')
@@ -20,9 +38,8 @@ const useSettingsStore = defineStore(
           document.documentElement.classList.add('dark')
           break
       }
-    }, {
-      immediate: true,
-    })
+    }
+
     watch(() => settings.value.menu.menuMode, (val) => {
       document.body.setAttribute('data-menu-mode', val)
     }, {
@@ -62,7 +79,7 @@ const useSettingsStore = defineStore(
         }
         else {
           // 如果是桌面设备，则根据页面宽度判断是否需要切换为移动端展示
-          mode.value = width < 992 ? 'mobile' : 'pc'
+          mode.value = width < 1024 ? 'mobile' : 'pc'
         }
       }
       else {
@@ -70,16 +87,17 @@ const useSettingsStore = defineStore(
       }
     }
 
-    // 次导航是否收起（用于记录 pc 模式下最后的状态）
-    const subMenuCollapseLastStatus = ref(settingsDefault.menu.subMenuCollapse)
     // 切换侧边栏导航展开/收起
     function toggleSidebarCollapse() {
       settings.value.menu.subMenuCollapse = !settings.value.menu.subMenuCollapse
-      if (mode.value === 'pc') {
-        subMenuCollapseLastStatus.value = !subMenuCollapseLastStatus.value
-      }
     }
-
+    // 次导航是否收起（用于记录 pc 模式下最后的状态）
+    const subMenuCollapseLastStatus = ref(settingsDefault.menu.subMenuCollapse)
+    watch(() => settings.value.menu.subMenuCollapse, (val) => {
+      if (mode.value === 'pc') {
+        subMenuCollapseLastStatus.value = val
+      }
+    })
     watch(mode, (val) => {
       switch (val) {
         case 'pc':
@@ -106,6 +124,7 @@ const useSettingsStore = defineStore(
 
     return {
       settings,
+      currentColorScheme,
       os,
       title,
       setTitle,

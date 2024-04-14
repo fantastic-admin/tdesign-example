@@ -4,7 +4,6 @@ import { OverlayScrollbarsComponent } from 'overlayscrollbars-vue'
 
 const props = withDefaults(
   defineProps<{
-    modelValue: boolean
     appear?: boolean
     side?: 'left' | 'right'
     title?: string
@@ -12,7 +11,6 @@ const props = withDefaults(
     overlay?: boolean
   }>(),
   {
-    modelValue: false,
     appear: false,
     side: 'right',
     preventClose: false,
@@ -21,9 +19,12 @@ const props = withDefaults(
 )
 
 const emits = defineEmits<{
-  'update:modelValue': [boolean]
-  'close': []
+  close: []
 }>()
+
+const isOpen = defineModel<boolean>({
+  default: false,
+})
 
 const slots = useSlots()
 
@@ -47,15 +48,6 @@ const transitionClass = computed(() => {
   }
 })
 
-const isOpen = computed({
-  get() {
-    return props.modelValue
-  },
-  set(value) {
-    emits('update:modelValue', value)
-  },
-})
-
 function close() {
   isOpen.value = false
   emits('close')
@@ -74,7 +66,7 @@ function close() {
             <DialogTitle m-0 text-lg text-dark dark:text-white>
               {{ title }}
             </DialogTitle>
-            <SvgIcon name="carbon:close" cursor-pointer @click="close" />
+            <SvgIcon name="i-carbon:close" cursor-pointer @click="close" />
           </div>
           <DialogDescription m-0 flex-1 of-y-hidden>
             <OverlayScrollbarsComponent :options="{ scrollbars: { autoHide: 'leave', autoHideDelay: 300 } }" defer class="h-full p-4">

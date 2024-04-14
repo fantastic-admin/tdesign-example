@@ -112,29 +112,49 @@ declare namespace Settings {
      */
     mode?: 'static' | 'fixed' | 'sticky'
   }
-  interface toolbar {
+  interface tabbar {
     /**
-     * 是否开启全屏
+     * 是否开启标签栏
      * @默认值 `false`
      */
-    enableFullscreen?: boolean
+    enable?: boolean
     /**
-     * 是否开启页面刷新
+     * 是否开启标签栏图标显示
      * @默认值 `false`
      */
-    enablePageReload?: boolean
+    enableIcon?: boolean
     /**
-     * 是否开启颜色主题
+     * 是否开启标签栏快捷键
      * @默认值 `false`
      */
-    enableColorScheme?: boolean
+    enableHotkeys?: boolean
   }
-  interface breadcrumb {
+  interface toolbar {
     /**
      * 是否开启面包屑导航
      * @默认值 `true`
      */
-    enable?: boolean
+    breadcrumb?: boolean
+    /**
+     * 是否开启导航搜索
+     * @默认值 `true`
+     */
+    navSearch?: boolean
+    /**
+     * 是否开启全屏
+     * @默认值 `false`
+     */
+    fullscreen?: boolean
+    /**
+     * 是否开启页面刷新
+     * @默认值 `false`
+     */
+    pageReload?: boolean
+    /**
+     * 是否开启颜色主题
+     * @默认值 `false`
+     */
+    colorScheme?: boolean
   }
   interface mainPage {
     /**
@@ -144,11 +164,6 @@ declare namespace Settings {
     enableHotkeys?: boolean
   }
   interface navSearch {
-    /**
-     * 是否开启导航搜索
-     * @默认值 `true`
-     */
-    enable?: boolean
     /**
      * 是否开启导航搜索快捷键
      * @默认值 `true`
@@ -193,10 +208,10 @@ declare namespace Settings {
     menu?: menu
     /** 顶栏设置 */
     topbar?: topbar
+    /** 标签栏设置 */
+    tabbar?: tabbar
     /** 工具栏设置 */
     toolbar?: toolbar
-    /** 面包屑导航设置 */
-    breadcrumb?: breadcrumb
     /** 页面设置 */
     mainPage?: mainPage
     /** 导航搜索设置 */
@@ -213,9 +228,11 @@ declare module 'vue-router' {
     defaultOpened?: boolean
     auth?: string | string[]
     sidebar?: boolean
+    menu?: boolean
     breadcrumb?: boolean
     activeMenu?: string
     cache?: boolean | string | string[]
+    noCache?: string | string[]
     link?: string
     breadcrumbNeste?: Route.breadcrumb[]
   }
@@ -247,7 +264,7 @@ declare namespace Menu {
       icon?: string
       defaultOpened?: boolean
       auth?: string | string[]
-      sidebar?: boolean
+      menu?: boolean
       link?: string
     }
     children?: recordRaw[]
@@ -260,5 +277,16 @@ declare namespace Menu {
       auth?: string | string[]
     }
     children: recordRaw[]
+  }
+}
+
+declare namespace Tabbar {
+  interface recordRaw {
+    tabId: string
+    fullPath: string
+    routeName?: RouteRecordRaw.name
+    title?: string | (() => string)
+    icon?: string
+    name: string[]
   }
 }

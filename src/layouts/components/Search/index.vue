@@ -4,13 +4,11 @@ import type { OverlayScrollbarsComponentRef } from 'overlayscrollbars-vue'
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-vue'
 import { cloneDeep } from 'lodash-es'
 import hotkeys from 'hotkeys-js'
-import type { RouteRecordRaw } from 'vue-router'
 import Breadcrumb from '../Breadcrumb/index.vue'
 import BreadcrumbItem from '../Breadcrumb/item.vue'
 import { resolveRoutePath } from '@/utils'
 import eventBus from '@/utils/eventBus'
 import useSettingsStore from '@/store/modules/settings'
-import useRouteStore from '@/store/modules/route'
 import useMenuStore from '@/store/modules/menu'
 import type { Menu } from '@/types/global'
 
@@ -30,17 +28,16 @@ const overlayTransitionClass = ref({
 const transitionClass = computed(() => {
   return {
     enter: 'ease-out duration-300',
-    enterFrom: 'opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95',
-    enterTo: 'opacity-100 translate-y-0 sm:scale-100',
+    enterFrom: 'opacity-0 translate-y-4 lg:translate-y-0 lg:scale-95',
+    enterTo: 'opacity-100 translate-y-0 lg:scale-100',
     leave: 'ease-in duration-200',
-    leaveFrom: 'opacity-100 translate-y-0 sm:scale-100',
-    leaveTo: 'opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95',
+    leaveFrom: 'opacity-100 translate-y-0 lg:scale-100',
+    leaveTo: 'opacity-0 translate-y-4 lg:translate-y-0 lg:scale-95',
   }
 })
 
 const router = useRouter()
 const settingsStore = useSettingsStore()
-const routeStore = useRouteStore()
 const menuStore = useMenuStore()
 
 interface listTypes {
@@ -132,14 +129,14 @@ onMounted(() => {
     isShow.value = !isShow.value
   })
   hotkeys('alt+s', (e) => {
-    if (settingsStore.settings.navSearch.enable && settingsStore.settings.navSearch.enableHotkeys) {
+    if (settingsStore.settings.toolbar.navSearch && settingsStore.settings.navSearch.enableHotkeys) {
       e.preventDefault()
       initSourceList()
       isShow.value = true
     }
   })
   hotkeys('esc', (e) => {
-    if (settingsStore.settings.navSearch.enable && settingsStore.settings.navSearch.enableHotkeys) {
+    if (settingsStore.settings.toolbar.navSearch && settingsStore.settings.navSearch.enableHotkeys) {
       e.preventDefault()
       isShow.value = false
     }
@@ -149,34 +146,27 @@ onMounted(() => {
 
 function initSourceList() {
   sourceList.value = []
-  if (settingsStore.settings.app.routeBaseOn !== 'filesystem') {
-    routeStore.routes.forEach((item) => {
-      item.children && getSourceList(item.children as RouteRecordRaw[])
-    })
-  }
-  else {
-    menuStore.menus.forEach((item) => {
-      getSourceListByMenus(item.children)
-    })
-  }
+  menuStore.allMenus.forEach((item) => {
+    getSourceListByMenus(item.children)
+  })
 }
 
-function hasChildren(item: RouteRecordRaw) {
+function hasChildren(item: Menu.recordRaw) {
   let flag = true
-  if (item.children?.every(i => i.meta?.sidebar === false)) {
+  if (item.children?.every(i => i.meta?.menu === false)) {
     flag = false
   }
   return flag
 }
-function getSourceList(arr: RouteRecordRaw[], basePath?: string, icon?: string, breadcrumb?: { title?: string | (() => string) }[]) {
+function getSourceListByMenus(arr: Menu.recordRaw[], basePath?: string, icon?: string, breadcrumb?: { title?: string | (() => string) }[]) {
   arr.forEach((item) => {
-    if (item.meta?.sidebar !== false) {
+    if (item.meta?.menu !== false) {
       const breadcrumbTemp = cloneDeep(breadcrumb) || []
       if (item.children && hasChildren(item)) {
         breadcrumbTemp.push({
           title: item.meta?.title,
         })
-        getSourceList(item.children, resolveRoutePath(basePath, item.path), item.meta?.icon ?? icon, breadcrumbTemp)
+        getSourceListByMenus(item.children, resolveRoutePath(basePath, item.path), item.meta?.icon ?? icon, breadcrumbTemp)
       }
       else {
         breadcrumbTemp.push({
@@ -190,28 +180,6 @@ function getSourceList(arr: RouteRecordRaw[], basePath?: string, icon?: string, 
           breadcrumb: breadcrumbTemp,
         })
       }
-    }
-  })
-}
-function getSourceListByMenus(arr: Menu.recordRaw[], icon?: string, breadcrumb?: { title?: string | (() => string) }[]) {
-  arr.forEach((item) => {
-    const breadcrumbTemp = cloneDeep(breadcrumb) || []
-    if (item.children && item.children.length > 0) {
-      breadcrumbTemp.push({
-        title: item.meta?.title,
-      })
-      getSourceListByMenus(item.children, item.meta?.icon ?? icon, breadcrumbTemp)
-    }
-    else {
-      breadcrumbTemp.push({
-        title: item.meta?.title,
-      })
-      sourceList.value.push({
-        icon: item.meta?.icon ?? icon,
-        title: item.meta?.title,
-        path: item.path as string,
-        breadcrumb: breadcrumbTemp,
-      })
     }
   })
 }
@@ -280,12 +248,12 @@ function pageJump(path: listTypes['path'], link: listTypes['link']) {
         <div class="fixed inset-0 bg-stone-200/75 backdrop-blur-sm transition-opacity dark:bg-stone-8/75" />
       </TransitionChild>
       <div class="fixed inset-0">
-        <div class="h-full flex items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <div class="h-full flex items-end justify-center p-4 text-center lg:items-center">
           <TransitionChild as="template" v-bind="transitionClass">
-            <DialogPanel class="relative h-full max-h-4/5 w-full flex flex-col text-left sm:max-w-2xl">
+            <DialogPanel class="relative h-full max-h-4/5 w-full flex flex-col text-left lg:max-w-2xl">
               <div class="flex flex-col overflow-y-auto rounded-xl bg-white shadow-xl dark:bg-stone-8">
                 <div class="flex items-center px-4 py-3" border-b="~ solid stone-2 dark:stone-7">
-                  <SvgIcon name="ep:search" :size="18" class="text-stone-5" />
+                  <SvgIcon name="i-ep:search" :size="18" class="text-stone-5" />
                   <input ref="searchInputRef" v-model="searchInput" placeholder="搜索页面，支持标题、URL模糊查询" class="w-full border-0 rounded-md bg-transparent px-3 text-base text-dark dark:text-white focus:outline-none placeholder-stone-4 dark:placeholder-stone-5" @keydown.esc="eventBus.emit('global-search-toggle')" @keydown.up.prevent="keyUp" @keydown.down.prevent="keyDown" @keydown.enter.prevent="keyEnter">
                 </div>
                 <DialogDescription class="relative m-0 of-y-hidden">
@@ -305,7 +273,7 @@ function pageJump(path: listTypes['path'], link: listTypes['link']) {
                     </template>
                     <template v-else>
                       <div flex="center col" py-6 text-stone-5>
-                        <SvgIcon name="tabler:mood-empty" :size="40" />
+                        <SvgIcon name="i-tabler:mood-empty" :size="40" />
                         <p m-2 text-base>
                           没有找到你想要的
                         </p>
@@ -317,16 +285,16 @@ function pageJump(path: listTypes['path'], link: listTypes['link']) {
                   <div class="flex gap-8">
                     <div class="inline-flex items-center gap-1 text-xs">
                       <HKbd>
-                        <SvgIcon name="ion:md-return-left" :size="14" />
+                        <SvgIcon name="i-ion:md-return-left" :size="14" />
                       </HKbd>
                       <span>访问</span>
                     </div>
                     <div class="inline-flex items-center gap-1 text-xs">
                       <HKbd>
-                        <SvgIcon name="ant-design:caret-up-filled" :size="14" />
+                        <SvgIcon name="i-ant-design:caret-up-filled" :size="14" />
                       </HKbd>
                       <HKbd>
-                        <SvgIcon name="ant-design:caret-down-filled" :size="14" />
+                        <SvgIcon name="i-ant-design:caret-down-filled" :size="14" />
                       </HKbd>
                       <span>切换</span>
                     </div>

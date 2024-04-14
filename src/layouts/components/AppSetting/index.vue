@@ -17,15 +17,6 @@ const menuStore = useMenuStore()
 
 const isShow = ref(false)
 
-const isDark = computed({
-  get() {
-    return settingsStore.settings.app.colorScheme === 'dark'
-  },
-  set(value) {
-    settingsStore.settings.app.colorScheme = value ? 'dark' : 'light'
-  },
-})
-
 watch(() => settingsStore.settings.menu.menuMode, (value) => {
   if (value === 'single') {
     menuStore.setActived(0)
@@ -51,20 +42,20 @@ watch(copied, (val) => {
   }
 })
 
-interface AnyObject {
-  [key: string]: any
+function isObject(value: any) {
+  return typeof value === 'object' && !Array.isArray(value)
 }
 // 比较两个对象，并提取出不同的部分
-function getObjectDiff(originalObj: AnyObject, diffObj: AnyObject): AnyObject {
-  if (typeof originalObj !== 'object' || typeof diffObj !== 'object') {
+function getObjectDiff(originalObj: Record<string, any>, diffObj: Record<string, any>) {
+  if (!isObject(originalObj) || !isObject(diffObj)) {
     return diffObj
   }
-  const diff: AnyObject = {}
+  const diff: Record<string, any> = {}
   for (const key in diffObj) {
     const originalValue = originalObj[key]
     const diffValue = diffObj[key]
-    if (originalValue !== diffValue) {
-      if (typeof originalValue === 'object' && typeof diffValue === 'object') {
+    if (JSON.stringify(originalValue) !== JSON.stringify(diffValue)) {
+      if (isObject(originalValue) && isObject(diffValue)) {
         const nestedDiff = getObjectDiff(originalValue, diffValue)
         if (Object.keys(nestedDiff).length > 0) {
           diff[key] = nestedDiff
@@ -97,7 +88,15 @@ function handleCopy() {
       颜色主题风格
     </div>
     <div class="flex items-center justify-center pb-4">
-      <HToggle v-model="isDark" on-icon="ri:sun-line" off-icon="ri:moon-line" />
+      <HTabList
+        v-model="settingsStore.settings.app.colorScheme"
+        :options="[
+          { icon: 'i-ri:sun-line', label: '明亮', value: 'light' },
+          { icon: 'i-ri:moon-line', label: '暗黑', value: 'dark' },
+          { icon: 'i-ri:computer-line', label: '系统', value: '' },
+        ]"
+        class="w-60"
+      />
     </div>
     <div v-if="settingsStore.mode === 'pc'" class="divider">
       导航栏模式
@@ -126,7 +125,7 @@ function handleCopy() {
       <div class="label">
         主导航切换跳转
         <HTooltip text="开启该功能后，切换主导航时，页面自动跳转至该主导航下，次导航里第一个导航">
-          <SvgIcon name="ri:question-line" />
+          <SvgIcon name="i-ri:question-line" />
         </HTooltip>
       </div>
       <HToggle v-model="settingsStore.settings.menu.switchMainMenuAndPageJump" :disabled="['single'].includes(settingsStore.settings.menu.menuMode)" />
@@ -135,7 +134,7 @@ function handleCopy() {
       <div class="label">
         次导航保持展开一个
         <HTooltip text="开启该功能后，次导航只保持单个菜单的展开">
-          <SvgIcon name="ri:question-line" />
+          <SvgIcon name="i-ri:question-line" />
         </HTooltip>
       </div>
       <HToggle v-model="settingsStore.settings.menu.subMenuUniqueOpened" />
@@ -173,41 +172,70 @@ function handleCopy() {
         ]"
       />
     </div>
+    <div>
+      <div class="divider">
+        标签栏
+      </div>
+      <div class="setting-item">
+        <div class="label">
+          是否启用
+        </div>
+        <HToggle v-model="settingsStore.settings.tabbar.enable" />
+      </div>
+      <div class="setting-item">
+        <div class="label">
+          是否显示图标
+        </div>
+        <HToggle v-model="settingsStore.settings.tabbar.enableIcon" :disabled="!settingsStore.settings.tabbar.enable" />
+      </div>
+      <div class="setting-item">
+        <div class="label">
+          是否启用快捷键
+        </div>
+        <HToggle v-model="settingsStore.settings.tabbar.enableHotkeys" :disabled="!settingsStore.settings.tabbar.enable" />
+      </div>
+    </div>
     <div class="divider">
       工具栏
     </div>
     <div v-if="settingsStore.mode === 'pc'" class="setting-item">
       <div class="label">
+        面包屑导航
+      </div>
+      <HToggle v-model="settingsStore.settings.toolbar.breadcrumb" />
+    </div>
+    <div class="setting-item">
+      <div class="label">
+        导航搜索
+        <HTooltip text="对导航进行快捷搜索">
+          <SvgIcon name="i-ri:question-line" />
+        </HTooltip>
+      </div>
+      <HToggle v-model="settingsStore.settings.toolbar.navSearch" />
+    </div>
+    <div v-if="settingsStore.mode === 'pc'" class="setting-item">
+      <div class="label">
         全屏
       </div>
-      <HToggle v-model="settingsStore.settings.toolbar.enableFullscreen" />
+      <HToggle v-model="settingsStore.settings.toolbar.fullscreen" />
     </div>
     <div class="setting-item">
       <div class="label">
         页面刷新
         <HTooltip text="使用框架内提供的刷新功能进行页面刷新">
-          <SvgIcon name="ri:question-line" />
+          <SvgIcon name="i-ri:question-line" />
         </HTooltip>
       </div>
-      <HToggle v-model="settingsStore.settings.toolbar.enablePageReload" />
+      <HToggle v-model="settingsStore.settings.toolbar.pageReload" />
     </div>
     <div class="setting-item">
       <div class="label">
         颜色主题
         <HTooltip text="开启后可在明亮/暗黑模式中切换">
-          <SvgIcon name="ri:question-line" />
+          <SvgIcon name="i-ri:question-line" />
         </HTooltip>
       </div>
-      <HToggle v-model="settingsStore.settings.toolbar.enableColorScheme" />
-    </div>
-    <div v-if="settingsStore.mode === 'pc'" class="divider">
-      面包屑导航
-    </div>
-    <div v-if="settingsStore.mode === 'pc'" class="setting-item">
-      <div class="label">
-        是否启用
-      </div>
-      <HToggle v-model="settingsStore.settings.breadcrumb.enable" />
+      <HToggle v-model="settingsStore.settings.toolbar.colorScheme" />
     </div>
     <div class="divider">
       页面
@@ -223,18 +251,9 @@ function handleCopy() {
     </div>
     <div class="setting-item">
       <div class="label">
-        是否启用
-        <HTooltip text="对导航进行快捷搜索">
-          <SvgIcon name="ri:question-line" />
-        </HTooltip>
-      </div>
-      <HToggle v-model="settingsStore.settings.navSearch.enable" />
-    </div>
-    <div class="setting-item">
-      <div class="label">
         是否启用快捷键
       </div>
-      <HToggle v-model="settingsStore.settings.navSearch.enableHotkeys" :disabled="!settingsStore.settings.navSearch.enable" />
+      <HToggle v-model="settingsStore.settings.navSearch.enableHotkeys" :disabled="!settingsStore.settings.toolbar.navSearch" />
     </div>
     <div class="divider">
       底部版权
@@ -276,7 +295,7 @@ function handleCopy() {
       <div class="label">
         是否启用
         <HTooltip text="该功能开启时，登录成功默认进入主页，反之则默认进入导航栏里第一个导航页面">
-          <SvgIcon name="ri:question-line" />
+          <SvgIcon name="i-ri:question-line" />
         </HTooltip>
       </div>
       <HToggle v-model="settingsStore.settings.home.enable" />
@@ -285,7 +304,7 @@ function handleCopy() {
       <div class="label">
         主页名称
         <HTooltip text="开启国际化时，该设置无效">
-          <SvgIcon name="ri:question-line" />
+          <SvgIcon name="i-ri:question-line" />
         </HTooltip>
       </div>
       <HInput v-model="settingsStore.settings.home.title" />
@@ -303,7 +322,7 @@ function handleCopy() {
       <div class="label">
         载入进度条
         <HTooltip text="该功能开启时，跳转路由会看到页面顶部有进度条">
-          <SvgIcon name="ri:question-line" />
+          <SvgIcon name="i-ri:question-line" />
         </HTooltip>
       </div>
       <HToggle v-model="settingsStore.settings.app.enableProgress" />
@@ -312,14 +331,14 @@ function handleCopy() {
       <div class="label">
         动态标题
         <HTooltip text="该功能开启时，页面标题会显示当前路由标题，格式为“页面标题 - 网站名称”；关闭时则显示网站名称，网站名称在项目根目录下 .env.* 文件里配置">
-          <SvgIcon name="ri:question-line" />
+          <SvgIcon name="i-ri:question-line" />
         </HTooltip>
       </div>
       <HToggle v-model="settingsStore.settings.app.enableDynamicTitle" />
     </div>
     <template v-if="isSupported" #footer>
       <HButton block @click="handleCopy">
-        <SvgIcon name="ep:document-copy" />
+        <SvgIcon name="i-ep:document-copy" />
         复制配置
       </HButton>
     </template>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
-    modelValue: string | number | undefined
     options: {
       label: string | number
       value: string | number
@@ -14,16 +13,14 @@ const props = withDefaults(
   },
 )
 
-const emits = defineEmits<{
-  'update:modelValue': [string | number]
-}>()
+const value = defineModel<string | number>()
 
 const selected = computed({
   get() {
-    return props.options.find(option => option.value === props.modelValue) ?? props.options[0]
+    return props.options.find(option => option.value === value.value) ?? props.options[0]
   },
   set(val) {
-    emits('update:modelValue', val.value)
+    value.value = val.value
   },
 })
 </script>
@@ -36,7 +33,7 @@ const selected = computed({
           {{ selected.label }}
         </span>
         <span class="pointer-events-none absolute end-0 inset-y-0 flex items-center pe-2.5">
-          <SvgIcon name="carbon:chevron-down" class="h-5 w-5 flex-shrink-0 text-stone-5" />
+          <SvgIcon name="i-carbon:chevron-down" class="h-5 w-5 flex-shrink-0 text-stone-5" />
         </span>
       </button>
     </div>

@@ -51,7 +51,7 @@ watch(() => routeInfo.path, () => {
 
 onMounted(() => {
   hotkeys('f5', (e) => {
-    if (settingsStore.settings.toolbar.enablePageReload) {
+    if (settingsStore.settings.toolbar.pageReload) {
       e.preventDefault()
       mainPage.reload()
     }
@@ -101,7 +101,7 @@ const enableAppSetting = import.meta.env.VITE_APP_SETTING === 'true'
     <HotkeysIntro />
     <template v-if="enableAppSetting">
       <div class="app-setting" @click="eventBus.emit('global-app-setting-toggle')">
-        <SvgIcon name="uiw:setting-o" class="icon" />
+        <SvgIcon name="i-uiw:setting-o" class="icon" />
       </div>
       <AppSetting />
     </template>
@@ -152,32 +152,37 @@ const enableAppSetting = import.meta.env.VITE_APP_SETTING === 'true'
 
   .sidebar-container {
     position: fixed;
-    z-index: 1010;
     top: 0;
     bottom: 0;
+    z-index: 1010;
     display: flex;
     width: calc(var(--g-main-sidebar-actual-width) + var(--g-sub-sidebar-actual-width));
     box-shadow: -1px 0 0 0 var(--g-border-color), 1px 0 0 0 var(--g-border-color);
     transition: width 0.3s, transform 0.3s, box-shadow 0.3s, top 0.3s;
+
+    &:has(> .main-sidebar-container.main-sidebar-enter-active),
+    &:has(> .main-sidebar-container.main-sidebar-leave-active) {
+      overflow: hidden;
+    }
   }
 
   .sidebar-mask {
     position: fixed;
-    z-index: 1000;
     top: 0;
     left: 0;
+    z-index: 1000;
     width: 100%;
     height: 100%;
+    visibility: hidden;
     background-image: radial-gradient(transparent 1px, rgb(0 0 0 / 30%) 1px);
     background-size: 4px 4px;
     backdrop-filter: saturate(50%) blur(4px);
-    transition: all 0.2s;
     opacity: 0;
-    visibility: hidden;
+    transition: all 0.2s;
 
     &.show {
-      opacity: 1;
       visibility: visible;
+      opacity: 1;
     }
   }
 
@@ -195,15 +200,23 @@ const enableAppSetting = import.meta.env.VITE_APP_SETTING === 'true'
     transition: margin-left 0.3s, background-color 0.3s, box-shadow 0.3s;
 
     .main {
-      height: 100%;
-      flex: auto;
       position: relative;
+      flex: auto;
+      height: 100%;
       overflow: hidden;
       transition: 0.3s;
     }
 
+    .topbar-container.has-tabbar + .main {
+      margin: var(--g-tabbar-height) 0 0;
+    }
+
     .topbar-container.has-toolbar + .main {
       margin: var(--g-toolbar-height) 0 0;
+    }
+
+    .topbar-container.has-tabbar.has-toolbar + .main {
+      margin: calc(var(--g-tabbar-height) + var(--g-toolbar-height)) 0 0;
     }
   }
 }
@@ -222,10 +235,6 @@ header:not(.header-leave-active) + .wrapper {
   .main-container {
     .topbar-container {
       top: var(--g-header-height);
-
-      :deep(.tools) {
-        display: none;
-      }
     }
   }
 }
@@ -234,18 +243,18 @@ header:not(.header-leave-active) + .wrapper {
   --at-apply: text-white dark:text-dark bg-ui-primary;
 
   position: fixed;
-  z-index: 10;
-  right: 0;
   top: calc(50% + 250px);
+  right: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 50px;
   height: 50px;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
   font-size: 24px;
   cursor: pointer;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
 
   .icon {
     animation: rotate 5s linear infinite;
@@ -272,12 +281,12 @@ header:not(.header-leave-active) + .wrapper {
 }
 
 .slide-right-enter-from {
-  opacity: 0;
   margin-left: -20px;
+  opacity: 0;
 }
 
 .slide-right-leave-to {
-  opacity: 0;
   margin-left: 20px;
+  opacity: 0;
 }
 </style>

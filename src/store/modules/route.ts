@@ -1,7 +1,6 @@
 import { cloneDeep } from 'lodash-es'
 import type { RouteMeta, RouteRecordRaw } from 'vue-router'
 import useSettingsStore from './settings'
-import useUserStore from './user'
 import { resolveRoutePath } from '@/utils'
 import { systemRoutes } from '@/router/routes'
 import apiApp from '@/api/modules/app'
@@ -12,7 +11,6 @@ const useRouteStore = defineStore(
   'route',
   () => {
     const settingsStore = useSettingsStore()
-    const userStore = useUserStore()
 
     const isGenerate = ref(false)
     const routesRaw = ref<Route.recordMainRaw[]>([])
@@ -36,7 +34,7 @@ const useRouteStore = defineStore(
       routes.forEach((route) => {
         if (route.children) {
           const childrenBaseUrl = resolveRoutePath(baseUrl, route.path)
-          const childrenBaseAuth = baseAuth ?? route.meta?.auth
+          const childrenBaseAuth = !baseAuth || baseAuth === '' || baseAuth?.length === 0 ? route.meta?.auth : baseAuth
           const tmpBreadcrumb = cloneDeep(breadcrumb)
           tmpBreadcrumb.push({
             path: childrenBaseUrl,
@@ -82,7 +80,7 @@ const useRouteStore = defineStore(
           if (!tmpRoute.meta) {
             tmpRoute.meta = {}
           }
-          tmpRoute.meta.auth = baseAuth ?? tmpRoute.meta?.auth
+          tmpRoute.meta.auth = !baseAuth || baseAuth === '' || baseAuth?.length === 0 ? tmpRoute.meta?.auth : baseAuth
           tmpRoute.meta.breadcrumbNeste = tmpBreadcrumb
           res.push(tmpRoute)
         }
@@ -119,63 +117,38 @@ const useRouteStore = defineStore(
       return routes
     })
 
-    // 判断是否有权限
-    function hasPermission(permissions: string[], route: Route.recordMainRaw | RouteRecordRaw) {
-      let isAuth = false
-      if (route.meta?.auth) {
-        isAuth = permissions.some((auth) => {
-          if (typeof route.meta?.auth === 'string') {
-            return route.meta.auth !== '' ? route.meta.auth === auth : true
+    // TODO 将设置 meta.sidebar 的属性转换成 meta.menu ，过渡处理，未来将被弃用
+    let isUsedDeprecatedAttribute = false
+    function converDeprecatedAttribute<T extends Route.recordMainRaw[]>(routes: T): T {
+      routes.forEach((route) => {
+        route.children = converDeprecatedAttributeRecursive(route.children)
+      })
+      if (isUsedDeprecatedAttribute) {
+        // turbo-console-disable-next-line
+        console.warn('[Fantastic-admin] 路由配置中的 "sidebar" 属性即将被弃用, 请尽快替换为 "menu" 属性')
+      }
+      return routes
+    }
+    function converDeprecatedAttributeRecursive(routes: RouteRecordRaw[]) {
+      if (routes) {
+        routes.forEach((route) => {
+          if (typeof route.meta?.sidebar === 'boolean') {
+            isUsedDeprecatedAttribute = true
+            route.meta.menu = route.meta.sidebar
+            delete route.meta.sidebar
           }
-          else if (typeof route.meta?.auth === 'object') {
-            return route.meta.auth.length > 0 ? route.meta.auth.includes(auth) : true
-          }
-          else {
-            return false
+          if (route.children) {
+            converDeprecatedAttributeRecursive(route.children)
           }
         })
       }
-      else {
-        isAuth = true
-      }
-      return isAuth
+      return routes
     }
-    // 根据权限过滤路由
-    function filterAsyncRoutes<T extends Route.recordMainRaw[] | RouteRecordRaw[]>(routes: T, permissions: string[]): T {
-      const res: any = []
-      routes.forEach((route) => {
-        if (hasPermission(permissions, route)) {
-          const tmpRoute = cloneDeep(route)
-          if (tmpRoute.children) {
-            tmpRoute.children = filterAsyncRoutes(tmpRoute.children, permissions)
-            tmpRoute.children.length && res.push(tmpRoute)
-          }
-          else {
-            res.push(tmpRoute)
-          }
-        }
-      })
-      return res
-    }
-    const routes = computed(() => {
-      let returnRoutes: Route.recordMainRaw[]
-      // 如果权限功能开启，则需要对路由数据进行筛选过滤
-      if (settingsStore.settings.app.enablePermission) {
-        returnRoutes = filterAsyncRoutes(routesRaw.value as any, userStore.permissions)
-      }
-      else {
-        returnRoutes = cloneDeep(routesRaw.value) as any
-      }
-      return returnRoutes
-    })
 
-    // 根据权限动态生成路由（前端生成）
-    async function generateRoutesAtFront(asyncRoutes: Route.recordMainRaw[]) {
+    // 生成路由（前端生成）
+    function generateRoutesAtFront(asyncRoutes: Route.recordMainRaw[]) {
       // 设置 routes 数据
-      routesRaw.value = cloneDeep(asyncRoutes) as any
-      if (settingsStore.settings.app.enablePermission) {
-        await userStore.getPermissions()
-      }
+      routesRaw.value = converDeprecatedAttribute(cloneDeep(asyncRoutes) as any)
       isGenerate.value = true
     }
     // 格式化后端路由数据
@@ -199,24 +172,18 @@ const useRouteStore = defineStore(
         return route
       })
     }
-    // 根据权限动态生成路由（后端获取）
+    // 生成路由（后端获取）
     async function generateRoutesAtBack() {
-      await apiApp.routeList().then(async (res) => {
+      await apiApp.routeList().then((res) => {
         // 设置 routes 数据
-        routesRaw.value = formatBackRoutes(res.data) as any
-        if (settingsStore.settings.app.enablePermission) {
-          await userStore.getPermissions()
-        }
+        routesRaw.value = converDeprecatedAttribute(formatBackRoutes(res.data) as any)
         isGenerate.value = true
       }).catch(() => {})
     }
-    // 根据权限动态生成路由（文件系统生成）
-    async function generateRoutesAtFilesystem(asyncRoutes: RouteRecordRaw[]) {
+    // 生成路由（文件系统生成）
+    function generateRoutesAtFilesystem(asyncRoutes: RouteRecordRaw[]) {
       // 设置 routes 数据
       filesystemRoutesRaw.value = cloneDeep(asyncRoutes) as any
-      if (settingsStore.settings.app.enablePermission) {
-        await userStore.getPermissions()
-      }
       isGenerate.value = true
     }
     // 记录 accessRoutes 路由，用于登出时删除路由
@@ -236,7 +203,7 @@ const useRouteStore = defineStore(
 
     return {
       isGenerate,
-      routes,
+      routesRaw,
       currentRemoveRoutes,
       flatRoutes,
       flatSystemRoutes,
