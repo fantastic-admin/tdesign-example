@@ -1,0 +1,1 @@
+import{j as o,m as r,y as i}from"./index-KkANRpdH.js";function c(){const t=o(),s=r(),e=i();function n(u){e.setActived(u),s.settings.menu.switchMainMenuAndPageJump&&t.push(e.sidebarMenusFirstDeepestPath)}return{switchTo:n}}export{c as u};
