@@ -58,11 +58,9 @@ function tabbarScrollTip() {
   }
 }
 function handlerMouserScroll(event: WheelEvent) {
-  if (event.deltaY || event.detail !== 0) {
-    tabsRef.value.scrollBy({
-      left: (event.deltaY || event.detail) > 0 ? 50 : -50,
-    })
-  }
+  tabsRef.value.scrollBy({
+    left: event.deltaY || event.detail,
+  })
 }
 function scrollTo(offsetLeft: number) {
   tabsRef.value.scrollTo({
@@ -77,7 +75,7 @@ function onTabbarContextmenu(event: MouseEvent, routeItem: Tabbar.recordRaw) {
     y: event.y,
     zIndex: 1050,
     iconFontClass: '',
-    customClass: 'contextmenu-custom',
+    customClass: 'tabbar-contextmenu',
     items: [
       {
         label: '重新加载',
@@ -166,13 +164,13 @@ onMounted(() => {
   })
 })
 onUnmounted(() => {
-  hotkeys.unbind('alt+q,alt+e,alt+w,alt+1,alt+2,alt+3,alt+4,alt+5,alt+6,alt+7,alt+8,alt+9,alt+0')
+  hotkeys.unbind('alt+left,alt+right,alt+w,alt+1,alt+2,alt+3,alt+4,alt+5,alt+6,alt+7,alt+8,alt+9,alt+0')
 })
 </script>
 
 <template>
   <div class="tabbar-container">
-    <div ref="tabsRef" class="tabs" @wheel.prevent="handlerMouserScroll">
+    <div ref="tabsRef" class="tabs scrollbar-none" @wheel.prevent="handlerMouserScroll">
       <TransitionGroup ref="tabContainerRef" name="tabbar" tag="div" class="tab-container">
         <div
           v-for="(element, index) in tabbarStore.list" :key="element.tabId"
@@ -187,8 +185,8 @@ onUnmounted(() => {
               <SvgIcon v-if="settingsStore.settings.tabbar.enableIcon && element.icon" :name="element.icon" class="icon" />
               {{ typeof element?.title === 'function' ? element.title() : element.title }}
             </div>
-            <div v-if="tabbarStore.list.length > 1" class="action-icon">
-              <SvgIcon name="i-ri:close-fill" @click.stop="tabbar.closeById(element.tabId)" />
+            <div v-if="tabbarStore.list.length > 1" class="action-icon" @click.stop="tabbar.closeById(element.tabId)">
+              <SvgIcon name="i-ri:close-fill" />
             </div>
             <div v-show="keys.alt && index < 9" class="hotkey-number">
               {{ index + 1 }}
@@ -200,48 +198,44 @@ onUnmounted(() => {
   </div>
 </template>
 
-<style lang="scss">
-.mx-menu-ghost-host {
-  z-index: 1000;
+<style>
+.tabbar-contextmenu {
+  --uno: fixed ring-1 ring-stone-2 dark-ring-stone-7 shadow-2xl;
 
-  .mx-context-menu {
-    --at-apply: fixed ring-1 ring-stone-2 dark:ring-stone-7 shadow-2xl;
+  background-color: var(--g-container-bg);
 
-    background-color: var(--g-container-bg);
+  .mx-context-menu-items .mx-context-menu-item {
+    --uno: transition-background-color;
 
-    .mx-context-menu-items .mx-context-menu-item {
-      --at-apply: transition-background-color;
-
-      &:not(.disabled):hover {
-        --at-apply: cursor-pointer bg-stone-1 dark:bg-stone-9;
-      }
-
-      span {
-        color: initial;
-      }
-
-      .icon {
-        color: initial;
-      }
-
-      &.disabled span,
-      &.disabled .icon {
-        opacity: 0.25;
-      }
+    &:not(.disabled):hover {
+      --uno: cursor-pointer bg-stone-1 dark-bg-stone-9;
     }
 
-    .mx-context-menu-item-sperator {
-      background-color: var(--g-container-bg);
+    span {
+      color: initial;
+    }
 
-      &::after {
-        --at-apply: bg-stone-2 dark:bg-stone-7;
-      }
+    .icon {
+      color: initial;
+    }
+
+    &.disabled span,
+    &.disabled .icon {
+      opacity: 0.25;
+    }
+  }
+
+  .mx-context-menu-item-sperator {
+    background-color: var(--g-container-bg);
+
+    &::after {
+      --uno: bg-stone-2 dark-bg-stone-7;
     }
   }
 }
 </style>
 
-<style lang="scss" scoped>
+<style scoped>
 .tabbar-container {
   position: relative;
   height: var(--g-tabbar-height);
@@ -254,14 +248,6 @@ onUnmounted(() => {
     left: 0;
     overflow-y: hidden;
     white-space: nowrap;
-
-    // firefox隐藏滚动条
-    scrollbar-width: none;
-
-    // chrome隐藏滚动条
-    &::-webkit-scrollbar {
-      display: none;
-    }
 
     .tab-container {
       display: inline-block;
@@ -412,14 +398,14 @@ onUnmounted(() => {
             transform: translateY(-50%);
 
             &:hover {
-              --at-apply: ring-1 ring-stone-3 dark:ring-stone-7;
+              --uno: ring-1 ring-stone-3 dark-ring-stone-7;
 
               background-color: var(--g-bg);
             }
           }
 
           .hotkey-number {
-            --at-apply: ring-1 ring-stone-3 dark:ring-stone-7;
+            --uno: ring-1 ring-stone-3 dark-ring-stone-7;
 
             position: absolute;
             top: 50%;
@@ -442,7 +428,7 @@ onUnmounted(() => {
   }
 }
 
-// 标签栏动画
+/* 标签栏动画 */
 .tabs {
   .tabbar-move,
   .tabbar-enter-active,

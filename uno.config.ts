@@ -10,6 +10,7 @@ import {
   transformerVariantGroup,
 } from 'unocss'
 import { entriesToCss, toArray } from '@unocss/core'
+import { presetScrollbar } from 'unocss-preset-scrollbar'
 import { darkTheme, lightTheme } from './themes'
 
 export default defineConfig<Theme>({
@@ -22,10 +23,23 @@ export default defineConfig<Theme>({
     },
   },
   shortcuts: [
-    {
-      'flex-center': 'flex justify-center items-center',
-      'flex-col-center': 'flex flex-col justify-center items-center',
-    },
+    [/^flex-?(col)?-(start|end|center|baseline|stretch)-?(start|end|center|between|around|evenly|left|right)?$/, ([, col, items, justify]) => {
+      const cls = ['flex']
+      if (col === 'col') {
+        cls.push('flex-col')
+      }
+      if (items === 'center' && !justify) {
+        cls.push('items-center')
+        cls.push('justify-center')
+      }
+      else {
+        cls.push(`items-${items}`)
+        if (justify) {
+          cls.push(`justify-${justify}`)
+        }
+      }
+      return cls.join(' ')
+    }],
   ],
   preflights: [
     {
@@ -60,6 +74,7 @@ export default defineConfig<Theme>({
       },
     }),
     presetTypography(),
+    presetScrollbar(),
   ],
   transformers: [
     transformerDirectives(),

@@ -11,7 +11,7 @@ const settingsStore = useSettingsStore()
 
 const enableToolbar = computed(() => {
   return !(
-    settingsStore.settings.menu.menuMode === 'head' && (
+    settingsStore.settings.menu.mode === 'head' && (
       !settingsStore.settings.toolbar.breadcrumb || settingsStore.settings.app.routeBaseOn === 'filesystem'
     )
   )
@@ -53,7 +53,7 @@ watch(scrollTop, (val, oldVal) => {
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 .topbar-container {
   position: absolute;
   top: 0;

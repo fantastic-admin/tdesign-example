@@ -27,25 +27,25 @@ function handlerMouserScroll(event: WheelEvent) {
 
 <template>
   <Transition name="header">
-    <header v-if="settingsStore.mode === 'pc' && settingsStore.settings.menu.menuMode === 'head'">
+    <header v-if="settingsStore.mode === 'pc' && settingsStore.settings.menu.mode === 'head'">
       <div class="header-container">
         <Logo class="title" />
-        <div ref="menuRef" class="menu-container" @wheel.prevent="handlerMouserScroll">
+        <div ref="menuRef" class="menu-container scrollbar-none" @wheel.prevent="handlerMouserScroll">
           <!-- 顶部模式 -->
-          <div class="menu flex of-hidden transition-all">
+          <div class="menu h-full flex of-hidden transition-all">
             <template v-for="(item, index) in menuStore.allMenus" :key="index">
               <div
-                class="menu-item relative transition-all" :class="{
+                class="menu-item relative mx-1 py-2 transition-all" :class="{
                   active: index === menuStore.actived,
                 }"
               >
                 <div
-                  v-if="item.children && item.children.length !== 0" class="group menu-item-container h-full w-full flex cursor-pointer items-center justify-between gap-1 px-3 text-[var(--g-header-menu-color)] transition-all hover:(bg-[var(--g-header-menu-hover-bg)] text-[var(--g-header-menu-hover-color)])" :class="{
+                  v-if="item.children && item.children.length !== 0" class="group menu-item-container h-full w-full flex cursor-pointer items-center justify-between gap-1 px-3 text-[var(--g-header-menu-color)] transition-all hover-(bg-[var(--g-header-menu-hover-bg)] text-[var(--g-header-menu-hover-color)])" :class="{
                     'text-[var(--g-header-menu-active-color)]! bg-[var(--g-header-menu-active-bg)]!': index === menuStore.actived,
                   }" :title="typeof item.meta?.title === 'function' ? item.meta?.title() : item.meta?.title" @click="switchTo(index)"
                 >
                   <div class="inline-flex flex-1 items-center justify-center gap-1">
-                    <SvgIcon v-if="item.meta?.icon" :name="item.meta?.icon" :size="20" class="menu-item-container-icon transition-transform group-hover:scale-120" async />
+                    <SvgIcon v-if="item.meta?.icon" :name="item.meta?.icon" class="menu-item-container-icon transition-transform group-hover-scale-120" />
                     <span class="w-full flex-1 truncate text-sm transition-height transition-opacity transition-width">
                       {{ typeof item.meta?.title === 'function' ? item.meta?.title() : item.meta?.title }}
                     </span>
@@ -61,7 +61,7 @@ function handlerMouserScroll(event: WheelEvent) {
   </Transition>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 header {
   position: fixed;
   top: 0;
@@ -115,14 +115,6 @@ header {
       overflow-x: auto;
       mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent);
 
-      // firefox隐藏滚动条
-      scrollbar-width: none;
-
-      // chrome隐藏滚动条
-      &::-webkit-scrollbar {
-        display: none;
-      }
-
       .menu {
         display: inline-flex;
         height: 100%;
@@ -134,6 +126,10 @@ header {
             &:hover {
               color: var(--g-header-menu-hover-color);
               background-color: var(--g-header-menu-hover-bg);
+            }
+
+            .menu-item-container-icon {
+              font-size: 20px !important;
             }
           }
 
@@ -147,7 +143,7 @@ header {
   }
 }
 
-// 头部动画
+/* 头部动画 */
 .header-enter-active,
 .header-leave-active {
   transition: transform 0.3s;

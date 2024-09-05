@@ -28,6 +28,27 @@ const menuStore = useMenuStore()
 const mainPage = useMainPage()
 const menu = useMenu()
 
+// 侧边栏主导航当前实际宽度
+const mainSidebarActualWidth = computed(() => {
+  let actualWidth = Number.parseInt(getComputedStyle(document.documentElement).getPropertyValue('--g-main-sidebar-width'))
+  if (settingsStore.settings.menu.mode === 'single' || (settingsStore.settings.menu.mode === 'head' && settingsStore.mode !== 'mobile')) {
+    actualWidth = 0
+  }
+  return `${actualWidth}px`
+})
+
+// 侧边栏次导航当前实际宽度
+const subSidebarActualWidth = computed(() => {
+  let actualWidth = Number.parseInt(getComputedStyle(document.documentElement).getPropertyValue('--g-sub-sidebar-width'))
+  if (settingsStore.settings.menu.subMenuCollapse && settingsStore.mode !== 'mobile') {
+    actualWidth = Number.parseInt(getComputedStyle(document.documentElement).getPropertyValue('--g-sub-sidebar-collapse-width'))
+  }
+  if (menuStore.sidebarMenus.every(item => item.meta?.menu === false)) {
+    actualWidth = 0
+  }
+  return `${actualWidth}px`
+})
+
 const isLink = computed(() => !!routeInfo.meta.link)
 
 watch(() => settingsStore.settings.menu.subMenuCollapse, (val) => {
@@ -72,7 +93,12 @@ const enableAppSetting = import.meta.env.VITE_APP_SETTING === 'true'
 </script>
 
 <template>
-  <div class="layout">
+  <div
+    class="layout" :style="{
+      '--g-main-sidebar-actual-width': mainSidebarActualWidth,
+      '--g-sub-sidebar-actual-width': subSidebarActualWidth,
+    }"
+  >
     <div id="app-main">
       <Header />
       <div class="wrapper">
@@ -109,7 +135,7 @@ const enableAppSetting = import.meta.env.VITE_APP_SETTING === 'true'
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 [data-mode="mobile"] {
   .sidebar-container {
     transform: translateX(calc((var(--g-main-sidebar-width) + var(--g-sub-sidebar-width)) * -1));
@@ -240,7 +266,7 @@ header:not(.header-leave-active) + .wrapper {
 }
 
 .app-setting {
-  --at-apply: text-white dark:text-dark bg-ui-primary;
+  --uno: text-white dark-text-dark bg-ui-primary;
 
   position: fixed;
   top: calc(50% + 250px);
@@ -271,7 +297,7 @@ header:not(.header-leave-active) + .wrapper {
   }
 }
 
-// 主内容区动画
+/* 主内容区动画 */
 .slide-right-enter-active {
   transition: 0.2s;
 }

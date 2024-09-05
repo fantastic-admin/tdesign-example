@@ -17,7 +17,7 @@ const menuStore = useMenuStore()
 
 const isShow = ref(false)
 
-watch(() => settingsStore.settings.menu.menuMode, (value) => {
+watch(() => settingsStore.settings.menu.mode, (value) => {
   if (value === 'single') {
     menuStore.setActived(0)
   }
@@ -93,7 +93,7 @@ function handleCopy() {
         :options="[
           { icon: 'i-ri:sun-line', label: '明亮', value: 'light' },
           { icon: 'i-ri:moon-line', label: '暗黑', value: 'dark' },
-          { icon: 'i-ri:computer-line', label: '系统', value: '' },
+          { icon: 'i-codicon:color-mode', label: '系统', value: '' },
         ]"
         class="w-60"
       />
@@ -103,17 +103,17 @@ function handleCopy() {
     </div>
     <div v-if="settingsStore.mode === 'pc'" class="menu-mode">
       <HTooltip text="侧边栏模式 (含主导航)" placement="bottom" :delay="500">
-        <div class="mode mode-side" :class="{ active: settingsStore.settings.menu.menuMode === 'side' }" @click="settingsStore.settings.menu.menuMode = 'side'">
+        <div class="mode mode-side" :class="{ active: settingsStore.settings.menu.mode === 'side' }" @click="settingsStore.settings.menu.mode = 'side'">
           <div class="mode-container" />
         </div>
       </HTooltip>
       <HTooltip text="顶部模式" placement="bottom" :delay="500">
-        <div class="mode mode-head" :class="{ active: settingsStore.settings.menu.menuMode === 'head' }" @click="settingsStore.settings.menu.menuMode = 'head'">
+        <div class="mode mode-head" :class="{ active: settingsStore.settings.menu.mode === 'head' }" @click="settingsStore.settings.menu.mode = 'head'">
           <div class="mode-container" />
         </div>
       </HTooltip>
       <HTooltip text="侧边栏模式 (不含主导航)" placement="bottom" :delay="500">
-        <div class="mode mode-single" :class="{ active: settingsStore.settings.menu.menuMode === 'single' }" @click="settingsStore.settings.menu.menuMode = 'single'">
+        <div class="mode mode-single" :class="{ active: settingsStore.settings.menu.mode === 'single' }" @click="settingsStore.settings.menu.mode = 'single'">
           <div class="mode-container" />
         </div>
       </HTooltip>
@@ -128,7 +128,7 @@ function handleCopy() {
           <SvgIcon name="i-ri:question-line" />
         </HTooltip>
       </div>
-      <HToggle v-model="settingsStore.settings.menu.switchMainMenuAndPageJump" :disabled="['single'].includes(settingsStore.settings.menu.menuMode)" />
+      <HToggle v-model="settingsStore.settings.menu.switchMainMenuAndPageJump" :disabled="['single'].includes(settingsStore.settings.menu.mode)" />
     </div>
     <div class="setting-item">
       <div class="label">
@@ -155,7 +155,7 @@ function handleCopy() {
       <div class="label">
         是否启用快捷键
       </div>
-      <HToggle v-model="settingsStore.settings.menu.enableHotkeys" :disabled="['single'].includes(settingsStore.settings.menu.menuMode)" />
+      <HToggle v-model="settingsStore.settings.menu.enableHotkeys" :disabled="['single'].includes(settingsStore.settings.menu.mode)" />
     </div>
     <div class="divider">
       顶栏
@@ -329,6 +329,21 @@ function handleCopy() {
     </div>
     <div class="setting-item">
       <div class="label">
+        哀悼模式
+        <HTooltip text="该功能开启时，整站会变为灰色">
+          <SvgIcon name="i-ri:question-line" />
+        </HTooltip>
+      </div>
+      <HToggle v-model="settingsStore.settings.app.enableMournMode" />
+    </div>
+    <div class="setting-item">
+      <div class="label">
+        色弱模式
+      </div>
+      <HToggle v-model="settingsStore.settings.app.enableColorAmblyopiaMode" />
+    </div>
+    <div class="setting-item">
+      <div class="label">
         动态标题
         <HTooltip text="该功能开启时，页面标题会显示当前路由标题，格式为“页面标题 - 网站名称”；关闭时则显示网站名称，网站名称在项目根目录下 .env.* 文件里配置">
           <SvgIcon name="i-ri:question-line" />
@@ -345,96 +360,96 @@ function handleCopy() {
   </HSlideover>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 .divider {
-  --at-apply: flex items-center justify-between gap-4 my-4 whitespace-nowrap text-sm font-500;
+  --uno: flex items-center justify-between gap-4 my-4 whitespace-nowrap text-sm font-500;
 
   &::before,
   &::after {
-    --at-apply: content-empty w-full h-1px bg-stone-2 dark:bg-stone-6;
+    --uno: content-empty w-full h-1px bg-stone-2 dark-bg-stone-6;
   }
 }
 
 .menu-mode {
-  --at-apply: flex items-center justify-center gap-4 pb-4;
+  --uno: flex items-center justify-center gap-4 pb-4;
 
   .mode {
-    --at-apply: relative w-16 h-12 rounded-2 ring-1 ring-stone-2 dark:ring-stone-7 cursor-pointer transition;
+    --uno: relative w-16 h-12 rounded-2 ring-1 ring-stone-2 dark-ring-stone-7 cursor-pointer transition;
 
     &.active {
-      --at-apply: ring-ui-primary ring-2;
+      --uno: ring-ui-primary ring-2;
     }
 
     &::before,
     &::after,
     .mode-container {
-      --at-apply: absolute pointer-events-none;
+      --uno: absolute pointer-events-none;
     }
 
     &::before {
-      --at-apply: content-empty bg-ui-primary;
+      --uno: content-empty bg-ui-primary;
     }
 
     &::after {
-      --at-apply: content-empty bg-ui-primary/60;
+      --uno: content-empty bg-ui-primary/60;
     }
 
     .mode-container {
-      --at-apply: bg-ui-primary/20 border-dashed border-ui-primary;
+      --uno: bg-ui-primary/20 border-width-1.5 border-dashed border-ui-primary;
 
       &::before {
-        --at-apply: content-empty absolute w-full h-full;
+        --uno: content-empty absolute w-full h-full;
       }
     }
 
     &-side {
       &::before {
-        --at-apply: top-2 bottom-2 left-2 w-2 rounded-tl-1 rounded-bl-1;
+        --uno: top-2 bottom-2 left-2 w-2 rounded-tl-1 rounded-bl-1;
       }
 
       &::after {
-        --at-apply: top-2 bottom-2 left-4.5 w-3;
+        --uno: top-2 bottom-2 left-4.5 w-3;
       }
 
       .mode-container {
-        --at-apply: inset-t-2 inset-r-2 inset-b-2 inset-l-8 rounded-tr-1 rounded-br-1;
+        --uno: inset-t-2 inset-r-2 inset-b-2 inset-l-8 rounded-tr-1 rounded-br-1;
       }
     }
 
     &-head {
       &::before {
-        --at-apply: top-2 left-2 right-2 h-2 rounded-tl-1 rounded-tr-1;
+        --uno: top-2 left-2 right-2 h-2 rounded-tl-1 rounded-tr-1;
       }
 
       &::after {
-        --at-apply: top-4.5 left-2 bottom-2 w-3 rounded-bl-1;
+        --uno: top-4.5 left-2 bottom-2 w-3 rounded-bl-1;
       }
 
       .mode-container {
-        --at-apply: inset-t-4.5 inset-r-2 inset-b-2 inset-l-5.5 rounded-br-1;
+        --uno: inset-t-4.5 inset-r-2 inset-b-2 inset-l-5.5 rounded-br-1;
       }
     }
 
     &-single {
       &::after {
-        --at-apply: top-2 left-2 bottom-2 w-3 rounded-tl-1 rounded-bl-1;
+        --uno: top-2 left-2 bottom-2 w-3 rounded-tl-1 rounded-bl-1;
       }
 
       .mode-container {
-        --at-apply: inset-t-2 inset-r-2 inset-b-2 inset-l-5.5 rounded-tr-1 rounded-br-1;
+        --uno: inset-t-2 inset-r-2 inset-b-2 inset-l-5.5 rounded-tr-1 rounded-br-1;
       }
     }
   }
 }
 
 .setting-item {
-  --at-apply: flex items-center justify-between gap-4 px-4 py-2 rounded-2 transition hover:bg-stone-1 dark:hover:bg-stone-9;
+  --uno: flex items-center justify-between gap-4 px-4 py-2 rounded-2 transition hover-bg-stone-1 dark-hover-bg-stone-9;
 
   .label {
-    --at-apply: flex items-center flex-shrink-0 gap-2 text-sm;
+    --uno: flex items-center flex-shrink-0 gap-2 text-sm;
 
     i {
-      --at-apply: text-xl text-orange cursor-help;
+      --uno: text-xl text-orange cursor-help;
     }
   }
 }

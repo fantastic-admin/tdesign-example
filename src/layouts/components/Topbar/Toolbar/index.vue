@@ -15,13 +15,13 @@ const settingsStore = useSettingsStore()
     <div class="h-full flex items-center of-hidden pl-2 pr-16" style="mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 50px), transparent);">
       <LeftSide />
     </div>
-    <div v-show="['side', 'single'].includes(settingsStore.settings.menu.menuMode)" class="h-full flex items-center px-2">
+    <div v-show="['side', 'single'].includes(settingsStore.settings.menu.mode)" class="h-full flex items-center px-2">
       <RightSide />
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 .toolbar-container {
   height: var(--g-toolbar-height);
   background-color: var(--g-container-bg);
