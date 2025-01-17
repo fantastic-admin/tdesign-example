@@ -1,31 +1,28 @@
 import path from 'node:path'
 import process from 'node:process'
-import fs from 'node:fs'
-import dayjs from 'dayjs'
-import type { PluginOption } from 'vite'
+import vueLegacy from '@vitejs/plugin-legacy'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import vueLegacy from '@vitejs/plugin-legacy'
-import VueDevTools from 'vite-plugin-vue-devtools'
-import autoImport from 'unplugin-auto-import/vite'
-import components from 'unplugin-vue-components/vite'
-import Unocss from 'unocss/vite'
-import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
-import { vitePluginFakeServer } from 'vite-plugin-fake-server'
-import Layouts from 'vite-plugin-vue-meta-layouts'
-import Pages from 'vite-plugin-pages'
-import { compression } from 'vite-plugin-compression2'
-import archiver from 'archiver'
-import TurboConsole from 'unplugin-turbo-console/vite'
-import banner from 'vite-plugin-banner'
 import boxen from 'boxen'
 import picocolors from 'picocolors'
+import Unocss from 'unocss/vite'
+import autoImport from 'unplugin-auto-import/vite'
+import TurboConsole from 'unplugin-turbo-console/vite'
+import components from 'unplugin-vue-components/vite'
+import { loadEnv, type PluginOption } from 'vite'
+import AppLoading from 'vite-plugin-app-loading'
+import Archiver from 'vite-plugin-archiver'
+import banner from 'vite-plugin-banner'
+import { compression } from 'vite-plugin-compression2'
+import { envParse, parseLoadedEnv } from 'vite-plugin-env-parse'
+import { vitePluginFakeServer } from 'vite-plugin-fake-server'
+import Pages from 'vite-plugin-pages'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import VueDevTools from 'vite-plugin-vue-devtools'
+import Layouts from 'vite-plugin-vue-meta-layouts'
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-export default function createVitePlugins(viteEnv, isBuild = false) {
+export default function createVitePlugins(mode: string, isBuild = false) {
+  const viteEnv = parseLoadedEnv(loadEnv(mode, process.cwd()))
   const vitePlugins: (PluginOption | PluginOption[])[] = [
     vue(),
     vueJsx(),
@@ -34,11 +31,16 @@ export default function createVitePlugins(viteEnv, isBuild = false) {
       modernPolyfills: [
         'es.array.at',
         'es.array.find-last',
+        'es.object.has-own',
       ],
     }),
 
     // https://github.com/vuejs/devtools-next
-    viteEnv.VITE_OPEN_DEVTOOLS === 'true' && VueDevTools(),
+    viteEnv.VITE_OPEN_DEVTOOLS && VueDevTools(),
+
+    envParse({
+      dtsPath: 'src/types/env.d.ts',
+    }),
 
     // https://github.com/unplugin/unplugin-auto-import
     autoImport({
@@ -55,11 +57,10 @@ export default function createVitePlugins(viteEnv, isBuild = false) {
 
     // https://github.com/unplugin/unplugin-vue-components
     components({
-      dirs: [
-        'src/components',
-        'src/layouts/ui-kit',
+      globs: [
+        'src/ui/components/*/index.vue',
+        'src/components/*/index.vue',
       ],
-      include: [/\.vue$/, /\.vue\?vue/, /\.tsx$/],
       dts: './src/types/components.d.ts',
     }),
 
@@ -77,7 +78,7 @@ export default function createVitePlugins(viteEnv, isBuild = false) {
       logger: !isBuild,
       include: 'src/mock',
       infixName: false,
-      enableProd: isBuild && viteEnv.VITE_BUILD_MOCK === 'true',
+      enableProd: isBuild && viteEnv.VITE_BUILD_MOCK,
     }),
 
     // https://github.com/dishait/vite-plugin-vue-meta-layouts
@@ -94,35 +95,17 @@ export default function createVitePlugins(viteEnv, isBuild = false) {
     }),
 
     // https://github.com/nonzzz/vite-plugin-compression
-    isBuild && viteEnv.VITE_BUILD_COMPRESS.split(',').includes('gzip') && compression(),
-    isBuild && viteEnv.VITE_BUILD_COMPRESS.split(',').includes('brotli') && compression({
+    viteEnv.VITE_BUILD_COMPRESS?.split(',').includes('gzip') && compression(),
+    viteEnv.VITE_BUILD_COMPRESS?.split(',').includes('brotli') && compression({
       exclude: [/\.(br)$/, /\.(gz)$/],
       algorithm: 'brotliCompress',
     }),
 
-    (function () {
-      let outDir: string
-      return {
-        name: 'vite-plugin-archiver',
-        apply: 'build',
-        configResolved(resolvedConfig) {
-          outDir = resolvedConfig.build.outDir
-        },
-        async closeBundle() {
-          if (['zip', 'tar'].includes(viteEnv.VITE_BUILD_ARCHIVE)) {
-            await sleep(1000)
-            const archive = archiver(viteEnv.VITE_BUILD_ARCHIVE, {
-              ...(viteEnv.VITE_BUILD_ARCHIVE === 'zip' && { zlib: { level: 9 } }),
-              ...(viteEnv.VITE_BUILD_ARCHIVE === 'tar' && { gzip: true, gzipOptions: { level: 9 } }),
-            })
-            const output = fs.createWriteStream(`${outDir}.${dayjs().format('YYYY-MM-DD-HH-mm-ss')}.${viteEnv.VITE_BUILD_ARCHIVE === 'zip' ? 'zip' : 'tar.gz'}`)
-            archive.pipe(output)
-            archive.directory(outDir, false)
-            archive.finalize()
-          }
-        },
-      }
-    })(),
+    viteEnv.VITE_BUILD_ARCHIVE && Archiver({
+      archiveType: viteEnv.VITE_BUILD_ARCHIVE,
+    }),
+
+    AppLoading('loading.html'),
 
     // https://github.com/unplugin/unplugin-turbo-console
     TurboConsole(),
@@ -138,6 +121,7 @@ export default function createVitePlugins(viteEnv, isBuild = false) {
 
     {
       name: 'vite-plugin-debug-plugin',
+      enforce: 'pre',
       transform: (code, id) => {
         if (/src\/main.ts$/.test(id)) {
           if (viteEnv.VITE_APP_DEBUG_TOOL === 'eruda') {
@@ -162,9 +146,10 @@ export default function createVitePlugins(viteEnv, isBuild = false) {
 
     {
       name: 'vite-plugin-disable-devtool',
+      enforce: 'pre',
       transform: (code, id) => {
         if (/src\/main.ts$/.test(id)) {
-          if (viteEnv.VITE_APP_DISABLE_DEVTOOL === 'true') {
+          if (viteEnv.VITE_APP_DISABLE_DEVTOOL) {
             code = code.concat(`
               import DisableDevtool from 'disable-devtool'
               DisableDevtool()

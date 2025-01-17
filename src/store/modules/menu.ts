@@ -1,12 +1,12 @@
-import { cloneDeep } from 'lodash-es'
+import type { Menu, Route } from '#/global'
 import type { RouteRecordRaw } from 'vue-router'
-import useSettingsStore from './settings'
-import useUserStore from './user'
-import useRouteStore from './route'
-import { resolveRoutePath } from '@/utils'
 import apiApp from '@/api/modules/app'
 import menu from '@/menu'
-import type { Menu, Route } from '#/global'
+import { resolveRoutePath } from '@/utils'
+import { cloneDeep } from 'es-toolkit'
+import useRouteStore from './route'
+import useSettingsStore from './settings'
+import useUserStore from './user'
 
 const useMenuStore = defineStore(
   // 唯一ID
@@ -114,6 +114,23 @@ const useMenuStore = defineStore(
       }
       return retnPath
     }
+    // 次导航是否有且只有一个可访问的菜单
+    const sidebarMenusHasOnlyMenu = computed(() => {
+      return isSidebarMenusHasOnlyMenu(sidebarMenus.value)
+    })
+    function isSidebarMenusHasOnlyMenu(menus: Menu.recordRaw[]) {
+      let count = 0
+      let isOnly = true
+      menus.forEach((menu) => {
+        if (menu.meta?.menu !== false) {
+          count++
+        }
+        if (menu.children) {
+          isOnly = isSidebarMenusHasOnlyMenu(menu.children)
+        }
+      })
+      return count <= 1 && isOnly
+    }
     // 默认展开的导航路径
     const defaultOpenedPaths = computed(() => {
       const defaultOpenedPaths: string[] = []
@@ -188,14 +205,24 @@ const useMenuStore = defineStore(
       }).catch(() => {})
     }
     // 设置主导航
-    function setActived(data: number | string) {
-      if (typeof data === 'number') {
+    function isPathInMenus(menus: Menu.recordRaw[], path: string) {
+      let flag = false
+      flag = menus.some((item) => {
+        if (item.children) {
+          return isPathInMenus(item.children, path)
+        }
+        return path.indexOf(`${item.path}/`) === 0 || path === item.path
+      })
+      return flag
+    }
+    function setActived(indexOrPath: number | string) {
+      if (typeof indexOrPath === 'number') {
         // 如果是 number 类型，则认为是主导航的索引
-        actived.value = data
+        actived.value = indexOrPath
       }
       else {
         // 如果是 string 类型，则认为是路由，需要查找对应的主导航索引
-        const findIndex = allMenus.value.findIndex(item => item.children.some(r => data.indexOf(`${r.path}/`) === 0 || data === r.path))
+        const findIndex = allMenus.value.findIndex(item => isPathInMenus(item.children, indexOrPath))
         if (findIndex >= 0) {
           actived.value = findIndex
         }
@@ -207,6 +234,7 @@ const useMenuStore = defineStore(
       allMenus,
       sidebarMenus,
       sidebarMenusFirstDeepestPath,
+      sidebarMenusHasOnlyMenu,
       defaultOpenedPaths,
       generateMenusAtFront,
       generateMenusAtBack,

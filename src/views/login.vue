@@ -6,7 +6,11 @@ meta:
 </route>
 
 <script setup lang="ts">
+import LoginForm from '@/components/AccountForm/LoginForm.vue'
+import RegisterForm from '@/components/AccountForm/RegisterForm.vue'
+import ResetPasswordForm from '@/components/AccountForm/ResetPasswordForm.vue'
 import Copyright from '@/layouts/components/Copyright/index.vue'
+import ColorScheme from '@/layouts/components/Topbar/Toolbar/ColorScheme/index.vue'
 import useSettingsStore from '@/store/modules/settings'
 
 defineOptions({
@@ -21,38 +25,37 @@ const redirect = ref(route.query.redirect?.toString() ?? settingsStore.settings.
 const account = ref<string>()
 // 表单类型
 const formType = ref<'login' | 'register' | 'resetPassword'>('login')
-const formRef = ref()
 </script>
 
 <template>
   <div class="bg-banner" />
+  <div class="absolute right-4 top-4 z-1 flex-center border rounded-lg bg-background p-1 text-base">
+    <ColorScheme v-if="settingsStore.settings.toolbar.colorScheme" />
+  </div>
   <div class="login-box">
     <div class="login-banner">
-      <img src="@/assets/images/logo.png" class="absolute left-4 top-4 h-30px rounded ring ring-stone-2 dark-ring-stone-8">
+      <img src="@/assets/images/logo.png" class="absolute inset-s-4 inset-t-4 h-30px rounded ring ring-border">
       <img src="@/assets/images/login-banner.png" class="banner">
     </div>
     <div class="login-form flex-col-center">
       <Transition name="fade" mode="out-in">
         <LoginForm
           v-if="formType === 'login'"
-          ref="formRef"
           :account
           @on-login="router.push(redirect)"
-          @on-register="(account) => { formType = 'register'; account = account }"
-          @on-reset-password="(account) => { formType = 'resetPassword'; account = account }"
+          @on-register="(val) => { formType = 'register'; account = val }"
+          @on-reset-password="(val) => { formType = 'resetPassword'; account = val }"
         />
         <RegisterForm
           v-else-if="formType === 'register'"
-          ref="formRef"
           :account
-          @on-register="(account) => { formType = 'login'; account = account }"
+          @on-register="(val) => { formType = 'login'; account = val }"
           @on-login="formType = 'login'"
         />
         <ResetPasswordForm
           v-else-if="formType === 'resetPassword'"
-          ref="formRef"
           :account
-          @on-reset-password="(account) => { formType = 'login'; account = account }"
+          @on-reset-password="(val) => { formType = 'login'; account = val }"
           @on-login="formType = 'login'"
         />
       </Transition>
@@ -67,7 +70,12 @@ const formRef = ref()
   z-index: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at center, var(--g-container-bg), var(--g-bg));
+  background:
+    radial-gradient(closest-side, hsl(var(--border) / 10%) 30%, hsl(var(--primary) / 20%) 30%, hsl(var(--border) / 30%) 50%) no-repeat,
+    radial-gradient(closest-side, hsl(var(--border) / 10%) 30%, hsl(var(--primary) / 20%) 30%, hsl(var(--border) / 30%) 50%) no-repeat;
+  filter: blur(100px);
+  background-position: 100% 100%, 0% 0%;
+  background-size: 200vw 200vh;
 }
 
 [data-mode="mobile"] {
@@ -107,21 +115,35 @@ const formRef = ref()
   position: absolute;
   display: flex;
   overflow: hidden;
-  background-color: var(--g-container-bg);
+  background-color: hsl(var(--background));
 
   [data-mode="pc"] & {
+    --uno: shadow-md rounded-md;
+
     top: 50%;
     left: 50%;
-    border-radius: 10px;
-    box-shadow: var(--el-box-shadow);
     transform: translateX(-50%) translateY(-50%);
   }
 
   .login-banner {
+    --uno: bg-muted dark:bg-muted/30;
+
     position: relative;
     width: 450px;
     overflow: hidden;
-    background-color: var(--g-bg);
+
+    &::before {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      content: "";
+      background:
+        radial-gradient(closest-side, hsl(var(--border) / 10%) 30%, hsl(var(--primary) / 20%) 30%, hsl(var(--border) / 30%) 50%) no-repeat,
+        radial-gradient(closest-side, hsl(var(--border) / 10%) 30%, hsl(var(--primary) / 20%) 30%, hsl(var(--border) / 30%) 50%) no-repeat;
+      filter: blur(100px);
+      background-position: 100% 100%, 0% 0%;
+      background-size: 200vw 200vh;
+    }
 
     .banner {
       position: absolute;

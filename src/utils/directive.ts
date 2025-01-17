@@ -1,19 +1,11 @@
-import type { App } from 'vue'
+import type { App, DirectiveBinding } from 'vue'
 
 export default function directive(app: App) {
-  // 注册 v-auth 和 v-auth-all 指令
-  app.directive('auth', {
-    mounted: (el, binding) => {
-      if (!useAuth().auth(binding.value)) {
-        el.remove()
-      }
-    },
-  })
-  app.directive('auth-all', {
-    mounted: (el, binding) => {
-      if (!useAuth().authAll(binding.value)) {
-        el.remove()
-      }
-    },
+  app.directive('auth', (el: HTMLElement, binding: DirectiveBinding) => {
+    watch(() => binding.modifiers.all ? useAuth().authAll(binding.value) : useAuth().auth(binding.value), (val) => {
+      el.style.display = val ? '' : 'none'
+    }, {
+      immediate: true,
+    })
   })
 }

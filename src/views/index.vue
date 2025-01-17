@@ -75,7 +75,7 @@ function getTableData(total = 5) {
 
 <template>
   <div>
-    <PageHeader>
+    <FaPageHeader>
       <template #title>
         <div class="flex items-center gap-4">
           欢迎使用 Fantastic-admin
@@ -86,8 +86,8 @@ function getTableData(total = 5) {
           本演示站基于 Fantastic-admin 源码开发，将 Element Plus 替换为 TDesign ，详细操作步骤请阅读官方文档。
         </div>
       </template>
-    </PageHeader>
-    <PageMain>
+    </FaPageHeader>
+    <FaPageMain>
       <TSpace size="24px">
         <TButton variant="base">
           填充按钮
@@ -102,14 +102,14 @@ function getTableData(total = 5) {
           文字按钮
         </TButton>
       </TSpace>
-    </PageMain>
-    <PageMain>
+    </FaPageMain>
+    <FaPageMain>
       <TSpace direction="vertical">
         <TInput />
         <TInput v-model="inputValue" placeholder="请输入内容（有默认值）" />
       </TSpace>
-    </PageMain>
-    <PageMain>
+    </FaPageMain>
+    <FaPageMain>
       <TRadioGroup v-model="radioValue">
         <TRadio :value="1">
           A
@@ -124,8 +124,8 @@ function getTableData(total = 5) {
           D
         </TRadio>
       </TRadioGroup>
-    </PageMain>
-    <PageMain>
+    </FaPageMain>
+    <FaPageMain>
       <TSpace direction="vertical" :size="12">
         <TDatePicker v-model="datePickerValue1" mode="date" />
         <TDatePicker v-model="datePickerValue2" mode="week" />
@@ -133,25 +133,25 @@ function getTableData(total = 5) {
         <TDatePicker v-model="datePickerValue4" mode="quarter" />
         <TDatePicker v-model="datePickerValue5" mode="year" />
       </TSpace>
-    </PageMain>
-    <PageMain>
+    </FaPageMain>
+    <FaPageMain>
       <TRate v-model="rateValue" />
-    </PageMain>
-    <PageMain>
+    </FaPageMain>
+    <FaPageMain>
       <TSpace>
         <TSelect v-model="selectValue1" :options="selectOptions1" />
         <TSelect v-model="selectValue2" disabled :options="selectOptions2" />
         <TSelect v-model="selectValue3" loading :options="selectOptions3" />
       </TSpace>
-    </PageMain>
-    <PageMain>
+    </FaPageMain>
+    <FaPageMain>
       <TSlider v-model="sliderValue1" />
       <TSlider v-model="sliderValue2" range />
-    </PageMain>
-    <PageMain>
+    </FaPageMain>
+    <FaPageMain>
       <TSwitch v-model="switchChecked" />
-    </PageMain>
-    <PageMain>
+    </FaPageMain>
+    <FaPageMain>
       <TSpace direction="vertical">
         <TSpace align="center">
           <TRadioGroup v-model="activeRowType" variant="default-filled">
@@ -178,6 +178,6 @@ function getTableData(total = 5) {
           lazy-load
         />
       </TSpace>
-    </PageMain>
+    </FaPageMain>
   </div>
 </template>

@@ -9,6 +9,7 @@
   },
   "stylelint.validate": [
     "css",
+    "postcss",
     "scss",
     "vue"
   ],
@@ -23,5 +24,6 @@
     "json",
     "jsonc",
     "yaml"
-  ]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

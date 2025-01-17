@@ -1,10 +1,10 @@
-import { cloneDeep } from 'lodash-es'
-import type { RouteRecordRaw } from 'vue-router'
-import useSettingsStore from './settings'
-import { resolveRoutePath } from '@/utils'
-import { systemRoutes } from '@/router/routes'
-import apiApp from '@/api/modules/app'
 import type { Route } from '#/global'
+import type { RouteRecordRaw } from 'vue-router'
+import apiApp from '@/api/modules/app'
+import { systemRoutes } from '@/router/routes'
+import { resolveRoutePath } from '@/utils'
+import { cloneDeep } from 'es-toolkit'
+import useSettingsStore from './settings'
 
 const useRouteStore = defineStore(
   // 唯一ID
@@ -114,38 +114,10 @@ const useRouteStore = defineStore(
       return routes
     })
 
-    // TODO 将设置 meta.sidebar 的属性转换成 meta.menu ，过渡处理，未来将被弃用
-    let isUsedDeprecatedAttribute = false
-    function converDeprecatedAttribute<T extends Route.recordMainRaw[]>(routes: T): T {
-      routes.forEach((route) => {
-        route.children = converDeprecatedAttributeRecursive(route.children)
-      })
-      if (isUsedDeprecatedAttribute) {
-        // turbo-console-disable-next-line
-        console.warn('[Fantastic-admin] 路由配置中的 "sidebar" 属性即将被弃用, 请尽快替换为 "menu" 属性')
-      }
-      return routes
-    }
-    function converDeprecatedAttributeRecursive(routes: RouteRecordRaw[]) {
-      if (routes) {
-        routes.forEach((route) => {
-          if (typeof route.meta?.sidebar === 'boolean') {
-            isUsedDeprecatedAttribute = true
-            route.meta.menu = route.meta.sidebar
-            delete route.meta.sidebar
-          }
-          if (route.children) {
-            converDeprecatedAttributeRecursive(route.children)
-          }
-        })
-      }
-      return routes
-    }
-
     // 生成路由（前端生成）
     function generateRoutesAtFront(asyncRoutes: Route.recordMainRaw[]) {
       // 设置 routes 数据
-      routesRaw.value = converDeprecatedAttribute(cloneDeep(asyncRoutes) as any)
+      routesRaw.value = cloneDeep(asyncRoutes) as any
       isGenerate.value = true
     }
     // 格式化后端路由数据
@@ -173,7 +145,7 @@ const useRouteStore = defineStore(
     async function generateRoutesAtBack() {
       await apiApp.routeList().then((res) => {
         // 设置 routes 数据
-        routesRaw.value = converDeprecatedAttribute(formatBackRoutes(res.data) as any)
+        routesRaw.value = formatBackRoutes(res.data) as any
         isGenerate.value = true
       }).catch(() => {})
     }

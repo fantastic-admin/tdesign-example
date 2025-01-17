@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           # 选择要使用的 node 版本
-          node-version: 20
+          node-version: 22
           # registry-url: https://registry.npmmirror.com/
 
       - uses: pnpm/action-setup@v3
@@ -50,14 +50,14 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: --max-old-space-size=8192
-        run: nr build:example
+        run: nr build
 
       - name: deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: ./dist-example
+          publish_dir: ./dist
           enable_jekyll: true
           force_orphan: true
           user_name: 'github-actions[bot]'

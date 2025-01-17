@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import SubMenu from './sub.vue'
-import Item from './item.vue'
 import type { MenuInjection, MenuProps } from './types'
+import Item from './item.vue'
+import SubMenu from './sub.vue'
 import { rootMenuInjectionKey } from './types'
 
 defineOptions({
@@ -69,11 +69,7 @@ const closeMenu: MenuInjection['closeMenu'] = (index) => {
     })
     return
   }
-  Object.keys(subMenus.value).forEach((item) => {
-    if (subMenus.value[item].indexPath.includes(index)) {
-      openedMenus.value = openedMenus.value.filter(item => item !== index)
-    }
-  })
+  openedMenus.value = openedMenus.value.filter(item => item !== index)
 }
 
 function setSubMenusActive(index: string) {
@@ -106,7 +102,7 @@ const handleSubMenuClick: MenuInjection['handleSubMenuClick'] = (index, indexPat
 function initMenu() {
   const activeItem = activeIndex.value && items.value[activeIndex.value]
   setSubMenusActive(activeIndex.value)
-  if (!activeItem || props.collapse) {
+  if (!activeItem || isMenuPopup.value || props.collapse) {
     return
   }
   // 展开该菜单项的路径上所有子菜单
@@ -162,7 +158,7 @@ provide(rootMenuInjectionKey, reactive({
 
 <template>
   <div
-    class="h-full w-full flex flex-col of-hidden transition-all" :class="{
+    class="h-full w-full flex flex-col of-hidden transition-all-300" :class="{
       'flex-row! w-auto!': isMenuPopup && props.mode === 'horizontal',
       'py-1': props.mode === 'vertical',
     }"
